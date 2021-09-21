@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formidable Pro PDF Extended Documentation</title>
+</head>
+<body>
+<h1>Formidable Pro PDF Extended Documentation</h1>
+<p><em>This is a copy of old documentation.  It may not be 100% correct and links may be broken</em></p>
+<section id="intro">
+	<h2>What is Formidable Pro PDF Extended?</h2>
+	<p>Formidable Pro PDF Extended is an expansion of the popular <a href="http://gravityformspdfextended.com">Gravity Forms PDF Extended</a> WordPress plugin that allows developers to quickly take data captured from Formidable Pro and generate and email or download a PDF document using nothing more than HTML and CSS. Powering this system is the feature-rich HTML-to-PDF package, <a href="http://www.mpdf1.com/mpdf/index.php">mPDF</a>.</p>
+	<h3>What can mPDF accomplish?</h3>
+	<p>mPDF offers the following features out of the box:</p>
+	<ul>
+	<li>Language Support – almost all languages are supported including RTL (right to left) languages like Arabic and Hebrew and <a href="#fonts-language-support">CJK languages</a> – Chinese, Japanese and Korean.</li>
+	<li>Page Numbering</li>
+	<li>Odd and even paging with mirrored margins (most commonly used in printing).</li>
+	<li>Nested Tables</li>
+	<li>Text-justification and hyphenation</li>
+	<li>Table of Contents</li>
+	<li>Index</li>
+	<li>Bookmarks</li>
+	<li>Watermarks</li>
+	<li>Password protection</li>
+	<li>UTF-8 encoded HTML</li>
+	<li>Better system resource handling</li>
+	</ul>
+	<p>To see exactly what mPDF is capable of view the <a href="#templates-intro">custom template examples</a> on our documentation pages.</p>
+</section>
+
+<section id="requirements">
+	<h2>Software and Server Requirements</h2>
+	<p>Formidable Pro PDF Extended has the following conditions that must be met to use the package:</p>
+	<table>
+	<tbody>
+	<tr>
+	<th colspan="2">Software Requirements</th>
+	</tr>
+	<tr>
+	<td colspan="2"><a href="https://formidableforms.com">Purchase and install Formidable Pro</a></td>
+	</tr>
+	<tr>
+	<td colspan="2">WordPress 3.6+</td>
+	</tr>
+	<tr>
+	<td colspan="2">Formidable Pro 1.07.01+</td>
+	</tr>
+	<tr>
+	<th colspan="2">Server Requirements</th>
+	</tr>
+	<tr>
+	<td colspan="2">PHP 5+ (5.3+ recommended)</td>
+	</tr>
+	<tr>
+	<td colspan="2"><a href="http://www.php.net/manual/en/mbstring.installation.php">MB String</a></td>
+	</tr>
+	<tr>
+	<td colspan="2"><a href="http://www.php.net/manual/en/image.installation.php">GD Library (optional)</a></td>
+	</tr>
+	<tr>
+	<td>RAM</td>
+	<td><strong>Recommended: 128MB</strong><br>
+	Minimum: 64MB</td>
+	</tr>
+	</tbody>
+	</table>
+</section>
+
+
+<section id="installation-configuration">
+	<h2>Installation and Configuration</h2>
+	<h3>Installation</h3>
+	<ol>
+	<li><a href="https://github.com/blueliquiddesigns/formidable-pro-pdf-extended/archive/master.zip">Download Formidable Pro PDF Extended</a>, upload the plugin to your website’s plugins folder and activate it.</li>
+	<li>Get the ID of the Formidable Pro form you want to generate a PDF with.</li>
+	<li>Open up /wp-content/themes/%ACTIVE_THEME%/FORMIDABLE_PDF_TEMPLATES/configuration.php and configure accordingly. The configuration section below will aid you setting up the plugin.</li>
+	<li>If you want to use a custom template to generate your PDFs then <a href="#templates-intro">see our comprehensive guide to building a PDF template</a>.</li>
+	</ol>
+	<h3>Configuration</h3>
+	<p>All configuration should be done in <em>/wp-content/theme/%ACTIVE_THEME%/FORMIDABLE_PDF_TEMPLATES/configuration.php</em>. The file contains examples of all the options and is heavily documented.</p>
+	<p><strong>BASIC USAGE</strong><br>
+	It is very easy to generate PDFs and have them attached to a Formidable Pro notifications. The following will send the default PDF template to all form notifications.</p>
+	<pre>/* send default template to all attachments */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true
+	);
+	</pre>
+	<p><strong id="default-template-only">DEFAULT TEMPLATE-ONLY CONFIGURATION</strong></p>
+	<p><em>Description:</em></p>
+	<ul>
+	<li><strong>default-show-html</strong> – This option will display HTML blocks in your default template.</li>
+	<li><strong>default-show-empty</strong> – All form fields will be displayed in the PDF, regardless of what the user input is.</li>
+	</ul>
+	<pre>/* set individual options for default templates */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'template' =&gt; 'default-template.php',
+	'default-show-html' =&gt; true
+	);
+
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'template' =&gt; 'default-template.php',
+	'default-show-empty' =&gt; true
+	);
+
+	/*
+	* Or use a combination of the new options to achieve the results you want
+	*/
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'template' =&gt; 'default-template.php',
+	'default-show-html' =&gt; true,
+	'default-show-empty' =&gt; true
+	);
+	</pre>
+	<p><strong>ATTACH DEFAULT TEMPLATE TO NOTIFICATION</strong><br>
+	You can also limit the notifications the PDF is sent to by specifying the specific notification(s). See our FAQ article on <a href="http://formidablepropdfextended.com/faq/find-notification-id">how to locate the notification ID</a>.</p>
+	<pre>/* only send default template to the notification with an ID of 1 */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; 1
+	);
+
+	/* multiple attachments but not all */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; array(0, 2)
+	);
+	</pre>
+	<p><strong>CUSTOM PDF NAME</strong><br>
+	You can set the PDF name of your document and use field ID/Keys in your filename ([sitename], [ip], [id], [key], [20], [ltzq9]).</p>
+	<div><strong>Note: </strong>Remember to add .pdf to the end of your custom PDF name</div>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true,
+	'filename' =&gt; 'User Document.pdf'
+	);
+
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1, 
+	'notifications' =&gt; true, 
+	'filename' =&gt; 'New PDF Name [id].pdf' 
+	);
+
+	</pre>
+	<p><strong>CUSTOM TEMPLATE</strong><br>
+	Please see our dedicated documentation page which discusses the <a href="#templates-intro">creation of custom template files</a>.<br>
+	You can set the custom template using the template parameter.</p>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'template' =&gt; 'example-template.php'
+	);
+	</pre>
+	<p><strong>CUSTOM PDF SIZE AND ORIENTATION</strong><br>
+	You can change the default size of your PDF from A4 to a number of pre-defined sizes, including letter and legal. You can also control if the document is landscape or portrait.</p>
+	<div><strong>Note:</strong> PDF size presents include: A0 – A10, B0 – B10, C0 – C10, 4A0, 2A0, RA0 – RA4, SRA0 – SRA4, Letter, Legal, Executive, Folio, Demy and Royal</div>
+	<pre>/* generate a PDF the size of US letter in landscape */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'pdf_size' =&gt; 'letter',
+	'orientation' =&gt; 'landscape'
+	);
+
+	/* generate a custom PDF (specified in millimeters) */
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'pdf_size' =&gt; array(150, 250)
+	);
+	</pre>
+	<p><strong>LANGUAGE SUPPORT</strong><br>
+	mPDF comes with a number of unicode fonts and by default will substitute a font if the specific character isn’t available, so you should be safe using the default font selection – DejaVuSans.</p>
+	<div><strong>Note: </strong>If you want to output PDFs in Japanese, Korean or Chinese you will need to <a href="#fonts-language-support">install additional fonts</a>.</div>
+	<div><strong>Note: </strong>If you are generating PDFs in RTL languages like Arabic or Hebrew you can call the RTL parameter to correctly display text in your PDF.</div>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'rtl' =&gt; true
+	);
+	</pre>
+	<p><strong>PDF SECURITY</strong><br>
+	You can easily restrict access to your PDFs by restricting user permission and applying a password to access the document, or modify PDF permissions. To enable these security methods you first need to set the security setting to true.</p>
+	<pre>/*
+	* Setting security settings with all values
+	*/
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true,
+
+	'security' =&gt; true,
+	'pdf_password' =&gt; 'myPDFpass',
+	'pdf_privileges' =&gt; array('copy', 'print', 'modify', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-highres'),
+	'pdf_master_password' =&gt; 'admin password'
+	);
+	</pre>
+	<div><strong>Warning:</strong> If pdf_master_password is omitted a random one will be generated</div>
+	<div><strong>Note:</strong> Valid privileges include: copy, print, modify, annot-forms, fill-forms, extract, assemble, print-highres</div>
+	<div><strong>Note:</strong> The use of print will only allow low-resolution printing from the document; you must specify print-highres to allow full resolution printing.</div>
+	<div><strong>Note:</strong> Passing a blank array or not passing anything to pdf_privileges will deny all permissions to the user.</div>
+	<p><strong>ADVANCED USAGE</strong><br>
+	You can generate and attach multiple PDFs on the same form by creating two different configuration arrays using the same form_id.</p>
+	<div><strong>Warning: </strong>You need to explicitly set the filename when using this method otherwise the default file name will be used and only generate one PDF.</div>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true,
+	'template' =&gt; 'custom-template.php',
+	'filename' =&gt; 'Custom.pdf'
+	);
+
+	$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true,
+	'template' =&gt; 'custom2.php',
+	'filename' =&gt; 'Custom Template 2.pdf'
+	);
+	</pre>
+	<p><strong id="default-configuration-options">DEFAULT CONFIGURATION OPTIONS</strong></p>
+	<div><strong>Note: </strong> The default configuration will only work if the configuration option FPPDF_SET_DEFAULT_TEMPLATE is set to true.</div>
+	<p>You also have the ability to set default configuration options for all forms that you haven’t explicitly set a configuration for. Users can use any configuration option which you would use in the normal configuration.</p>
+	<pre>/*
+	* Users can use any configuration option like you would for a singular form, including:
+	* notifications, template, filename, pdf_size, orientation, security and rtl
+	* Note: this will only work if the configuration option FPPDF_SET_DEFAULT_TEMPLATE is set to true
+	*/
+	global $fp_pdf_default_configuration;
+
+	$fp_pdf_default_configuration = array(
+	'template' =&gt; 'default-template.php',
+	'pdf_size' =&gt; 'A4'
+	);
+	</pre>
+	<p><strong>PUTTING IT ALL TOGETHER</strong><br>
+	We’ve put together an example that uses all the configuration options (minus the default template-specific options) for Formidable Pro PDF Extended.</p>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; array(1, 2),
+	'template' =&gt; 'custom-template.php',
+	'filename' =&gt; 'My_Custom_PDF.pdf',
+
+	'rtl' =&gt; true,
+
+	'pdfsize' =&gt; 'A10',
+	'orientation' =&gt; 'landscape',
+
+	'security' =&gt; true,
+	'pdf_password' =&gt; 'mypass',
+	'pdf_privileges' =&gt; array('print', 'fill-forms', 'print-highres'),
+	'pdf_master_password' =&gt; 'admin password'
+	);
+	</pre>
+	<h2>Settings</h2>
+	<table cellspacing="0">
+	<colgroup>
+	<col>
+	<col>
+	<col>
+	<col>
+	<col> </colgroup>
+	<tbody>
+	<tr>
+	<th>Property</th>
+	<th>Default</th>
+	<th>Type</th>
+	<th>Example</th>
+	<th>Description</th>
+	</tr>
+	<tr>
+	<td><strong>form_id</strong></td>
+	<td>N/A</td>
+	<td>Mixed – Integer/Array</td>
+	<td>1 or array(1,2,5)</td>
+	<td>The ID of the form you want to apply the PDF configuration to. The only required option.</td>
+	</tr>
+	<tr>
+	<td><strong>default-show-html</strong> (v3.1.0+)</td>
+	<td>false</td>
+	<td>Boolean</td>
+	<td>true or false</td>
+	<td>This option will display HTML blocks in your default template.</td>
+	</tr>
+	<tr>
+	<td><strong>default-show-empty</strong> (v3.1.0+)</td>
+	<td>false</td>
+	<td>Boolean</td>
+	<td>true or false</td>
+	<td>All form fields will be displayed in the PDF, regardless of what the user input is.</td>
+	</tr>
+	<tr>
+	<td><strong>notifications </strong></td>
+	<td>N/A</td>
+	<td>Mixed – Integer/Array/Boolean</td>
+	<td>1, array(0, 3) or true.</td>
+	<td>The notifications you want to attach the PDF to. Leave blank will not attach PDF to notification.</td>
+	</tr>
+	<tr>
+	<td><strong>template</strong></td>
+	<td>Default-template.php</td>
+	<td>String</td>
+	<td>“my-custom- template.php”</td>
+	<td>The template file used to generate the PDF document.<p></p>
+	<p>Note: PDF templates are located in your active theme’s&nbsp;FORMIDABLE_PDF_TEMPLATES folder.</p></td>
+	</tr>
+	<tr>
+	<td><strong>filename </strong></td>
+	<td>form-{form_id}- entry-{entry_id}.pdf</td>
+	<td>String</td>
+	<td>“My Custom Name.pdf”</td>
+	<td>Change the name of the PDF file.</td>
+	</tr>
+	<tr>
+	<td><strong>pdf_size </strong></td>
+	<td>A4</td>
+	<td>Mixed – String/Array</td>
+	<td>“Letter”, “A10″ or array(50, 200)</td>
+	<td>Sets the PDF size. Can pass a string with pre-defined size or an array which sets the PDF width and height in millimetres.<p></p>
+	<p><strong>PDF Presets</strong></p>
+	<p>A0 – A10, B0 – B10, C0 – C10</p>
+	<p>4A0, 2A0, RA0 – RA4, SRA0 – SRA4</p>
+	<p>Letter, Legal, Executive, Folio</p>
+	<p>Demy, Royal</p></td>
+	</tr>
+	<tr>
+	<td><strong>orientation </strong></td>
+	<td>Portrait</td>
+	<td>String</td>
+	<td>“landscape”</td>
+	<td>Change the orientation of the PDF to landscape.<br>
+	NOTE: By default the orientation is portrait so you only need to add it for landscape PDFs</td>
+	</tr>
+	<tr>
+	<td><strong>rtl </strong></td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>True</td>
+	<td>Change the text direction from right to left for languages like Hebrew and Arabic</td>
+	</tr>
+	<tr>
+	<td><strong>security </strong></td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>True</td>
+	<td>Determines whether to restrict access to PDF. Use in conjunction with pdf_master_password, pdf_password and pdf_privileges.</td>
+	</tr>
+	<tr>
+	<td><strong>pdf_master_password</strong></td>
+	<td>N/A</td>
+	<td>String</td>
+	<td>“aSAja4202$@@”</td>
+	<td>Restricts modification of the PDF document. If omitted a random password will be generated.</td>
+	</tr>
+	<tr>
+	<td><strong>pdf_password</strong></td>
+	<td>N/A</td>
+	<td>String</td>
+	<td>“U5erPa55w%rd”</td>
+	<td>Restricts access to a PDF. If you pass an empty string there won’t be a password on the PDF.</td>
+	</tr>
+	<tr>
+	<td><strong>pdf_privileges</strong></td>
+	<td>N/A</td>
+	<td>Array</td>
+	<td>array(‘copy’, ‘print’, ‘modify’, ‘annot-forms’, ‘fill-forms’, ‘extract’, ‘assemble’, ‘print-highres’)</td>
+	<td>Restricts what users are able to do with the PDF.<br>
+	Note: The use of print will only allow low-resolution printing from the document; you must specify print-highres to allow full resolution printing.<br>
+	Note: Passing a blank array or not passing anything to pdf_privileges will deny all permissions to the user</td>
+	</tr>
+	</tbody>
+	</table>
+	<h2 id="constants">Advanced Configuration</h2>
+	<p>At the bottom of the configuration.php file is a number of constants that modify advanced program settings – most related to reducing the software’s memory footprint. View the<a href="#memory-problems"> memory footprint portion of the documentation</a> for more information about reducing memory usage.</p>
+	<table cellspacing="0">
+	<colgroup>
+	<col>
+	<col>
+	<col>
+	<col>
+	<col> </colgroup>
+	<tbody>
+	<tr>
+	<th>Property</th>
+	<th>Default</th>
+	<th>Type</th>
+	<th>Example</th>
+	<th>Description</th>
+	</tr>
+	<tr>
+	<td>FPPDF_SET_DEFAULT_TEMPLATE</td>
+	<td>True</td>
+	<td>Boolean</td>
+	<td>false</td>
+	<td>By default, forms that don’t have PDFs assigned through the above configuration will automatically use the default template in the admin area. Set to false to disable.</td>
+	</tr>
+	<tr>
+	<td>FP_PDF_ENABLE_MPDF_LITE</td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>true</td>
+	<td>Reduce the memory footprint by disabling advanced features like advanced table borders, terms and conditions, columns, index, bookmarks and barcodes.</td>
+	</tr>
+	<tr>
+	<td>FP_PDF_ENABLE_MPDF_TINY</td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>true</td>
+	<td>Further reduce memory footprint by disabling all the features of Lite plus positioning, float, watermark and form support</td>
+	</tr>
+	<tr>
+	<td>FP_PDF_DISABLE_FONT_SUBSTITUTION</td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>true</td>
+	<td valign="top" width="246">Disable font substitution. The entire font file will be embedded in PDF.<p></p>
+	<p>Note: embedding entire font files increases PDF file size.</p></td>
+	</tr>
+	<tr>
+	<td>FP_PDF_ENABLE_SIMPLE_TABLES</td>
+	<td>False</td>
+	<td>Boolean</td>
+	<td>true</td>
+	<td>Disable the advanced table feature and forces all cells to have the same border and background</td>
+	</tr>
+	</tbody>
+	</table>
+</section>
+
+<section id="custom-display-shortcodes">
+	<h1>Custom Display Shortcodes</h1>
+	<p>One of the unique features of Formidable Pro is the ability to create custom displays. To take advantage of this, we’ve created a shortcode called <strong>[pdf] </strong>which securely displays a form entry’s PDF.</p>
+	<p>As standard, a PDF generated with Formidable Pro PDF Extended can only be viewed by the original owner (matched against the user’s login ID or IP address) or a logged in user with the <em>frm_view_entries </em>role. Whereas the new shortcode uses WordPress’ nonce system to generate a secure URL so that non-authorised users can view these PDFs.</p>
+	<h2>Usage</h2>
+	<p>The shortcode can only be used in the custom display’s content area. We’ve made the shortcode as robust as possible. Users can change the template file used, choose whether the PDF should be viewed in the browser or download and change the link text.</p>
+	<p>By default, the shortcode will:</p>
+	<ul>
+	<li>Use the template assigned to the form in the configuration.php</li>
+	<li>Display the PDF inline</li>
+	<li>Display a link to the PDF saying ‘View PDF’</li>
+	</ul>
+	<pre>&lt;!-- The standard shortcode usage --&gt;
+	[pdf]
+
+	&lt;!-- Use a different PDF template that what is set in the configuration.php file --&gt;
+	[pdf template="example-template.php"]
+
+	&lt;!-- Use the default template and link text but force the browser to download the PDF --&gt;
+	[pdf download="1"]
+
+	&lt;!-- Change the link text --&gt;
+	[pdf]Click here to view PDF[/pdf]
+
+	&lt;!-- Putting it all together... --&gt;
+	[pdf template="example-template.php" download="1"]Click here to view PDF[/pdf]</pre>
+	<dl id="attachment_2245" style="width: 810px;">
+	<dt></dt>
+	</dl>
+	<p></p><div id="attachment_2290" style="width: 788px"><img alt="Custom Display from the Admin Area" src="http://formidablepropdfextended.com/wp-content/uploads/2013/11/custom-display-admin.jpg" width="778" height="536"><p>Admin area example of the [pdf] shortcode usage in a custom display.</p></div><div id="attachment_2291" style="width: 642px"><img alt="custom-display-front-end" src="http://formidablepropdfextended.com/wp-content/uploads/2013/11/custom-display-front-end.jpg" width="632" height="356"><p>Front end view of the custom display with multiple [pdf] shortcode examples.</p></div>&nbsp;<p></p>
+</section>
+
+<section id="css-html-support">
+	<h2>CSS Selector and Cascade Limitations</h2>
+	<p>The only pitfall we’ve experienced while using the mPDF package is the lack of cascading CSS, psudo-classes and CSS3 selector support.</p>
+	<h3>Supported CSS</h3>
+	<p>The following are supported (in order of ascending priority). Lower styles and attributes in the list will overwrite higher styles and attributes.</p>
+	<ul>
+	<li>CSS Stylesheets – included in header of HTML document using &lt;style&gt;&lt;/style&gt;, as &lt;link&nbsp; /&gt; or using @import()
+	<ul>
+	<li>Html tags – p { font-size:12pt; color:#880000; }</li>
+	<li>Class – .stylename { font-size:9pt; }</li>
+	<li>Id – #style { font-size:9pt; }</li>
+	</ul>
+	</li>
+	<li>HTML attributes – &lt;div align=”center”&gt;</li>
+	<li>Inline CSS style – &lt;p style=”font-family:monospace;”&gt;</li>
+	</ul>
+	<p>CSS attributes used in stylesheets or inline can define:</p>
+	<ul>
+	<li>Most tags/elements such as div, p, body, table, span</li>
+	<li>Class names – p.mystylename { font-size:9pt; }</li>
+	<li>Id – div#style { font-size:9pt; }</li>
+	</ul>
+	<p>For a <a href="http://mpdf1.com/manual/index.php?tid=34">full list of supported CSS properties</a> please review the extensive mPDF manual.</p>
+	<h3>CSS Limitations</h3>
+	<p>There is limited support for cascaded CSS but this can only be applied to standard block-level elements (you can’t set an inline element to block and use it in a cascading CSS selector).</p>
+	<p><strong>Valid Cascading CSS</strong></p>
+	<ul>
+	<li>div.topic table.type1 td {…}</li>
+	<li>div #my-id {…}</li>
+	<li>table tr {…}</li>
+	<li>div p.style {…}</li>
+	</ul>
+	<p><strong>Invalid Cascading CSS</strong></p>
+	<ul>
+	<li>div.style a {…}</li>
+	<li>a#class1 {…}</li>
+	<li>span.class a {…}</li>
+	<li>body.class div {…}</li>
+	</ul>
+	<p>We advise you keep your CSS selectors as simple as possible and assign a class or ID to the elements you need to target.</p>
+	<ul>
+	<li>#my-id {…}</li>
+	<li>.my-class {…}</li>
+	</ul>
+	<h3>Supported HTML</h3>
+	<div><strong>Note: </strong>All HTML elements are hard coded as block or inline elements. This cannot be changed using CSS’s ‘display’ property.</div>
+	<p><a href="http://mpdf1.com/manual/index.php?tid=256">View all supported HTML tags</a> and <a href="http://mpdf1.com/manual/index.php?tid=257">attributes</a>.</p>
+</section>
+
+<section id="fonts-language-support">
+	<h2>Available Fonts</h2>
+	<div><strong>Note: </strong>By default the package uses the unicode font DejaVuSans which has characters available for most languages worldwide.</div>
+	<p>The following open source fonts are available with Formidable Pro PDF Extended and should cover the majority of languages worldwide:</p>
+	<ul>
+	<li>DejaVuSans, DejaVuSansCondensed, DejaVuSansMono, DejaVuSerif, DejaVuSerifCondensed</li>
+	<li>Garuda – Thai (sans-serif)</li>
+	<li>Norasi – Thai (serif)</li>
+	<li>XBZar, XBRiyaz – Arabic</li>
+	</ul>
+	<p>The exception to this is Chinese, Japanese and Korean languages which requires users to manually install the fonts.</p>
+	<h3>CJK Font Support</h3>
+	<p>Formidable Pro PDF Extended doesn’t support Chinese, Japanese or Korean languages out of the box due to licensing restrictions (or rather lack of a license).</p>
+	<p>If you need CJK support you will need to manually download Sun-ExtA, Sun-ExtB and UnBatang and upload the .ttf files to your active theme’s FORMIDABLE_PDF_TEMPLATES/fonts/ folder. Once uploaded, you can install the fonts through the plugin’s settings page (Forms -&gt; Settings -&gt; PDF) by clicking <em>Initialise Fonts Only</em>.</p>
+	<p>After installation you can use the new fonts by setting the font-family CSS property:</p>
+	<ul>
+	<li>font-family: UnBatang, dejavusanscondensed, sans-serif;</li>
+	<li>font-family: sun-exta, dejavusanscondensed, sans-serif;</li>
+	<li>font-family: sun-extb, dejavusanscondensed, sans-serif;</li>
+	</ul>
+	<h4>DOWNLOAD</h4>
+	<div>Download all three fonts below and upload them to your active theme’s FORMIDABLE_PDF_TEMPLATES/fonts/ folder.</div>
+	<ul>
+	<li><a href="http://www.alanwood.net/downloads/sun-exta.zip">Sun-ExtA</a></li>
+	<li><a href="http://www.alanwood.net/downloads/sun-extb.zip">Sun-ExtB</a></li>
+	<li><a href="http://www.fontsaddict.com/font/un-batang.html">UnBatang</a></li>
+	</ul>
+	<p>For a full overview of which languages each font supports <a href="http://mpdf1.com/manual/index.php?tid=54">please view the mPDF documentation</a>.</p>
+	<h3 id="installing-fonts">Installing Custom Fonts</h3>
+	<p>Users can install their own font files and user them in their PDFs. With that said there are a few restrictions on fonts, including:</p>
+	<ol>
+	<li>Only support for Truetype fonts (.ttf)</li>
+	<li>Fonts must follow the Truetype specification and use Unicode mapping to the characters. </li>
+	</ol>
+	<h4>Installation</h4>
+	<p>Installing your custom font is as easy as placing your .ttf file in the FORMIDABLE_PDF_TEMPLATES/fonts/ folder, which is located in your active theme. Once uploaded, you can install the fonts through the plugin’s settings page (Formidable -&gt; Global Settings PDF) by clicking <em>Initialise Fonts Only</em>.</p>
+	<h4>Usage</h4>
+	<p>After installation you can use the new fonts by setting the font-family CSS property. Your font family name will be the name of your font file (minus .ttf). For instance, if I upload a file called Mefis.ttf the font family name would be <em>Mefis</em>.</p>
+	<pre>/* 
+	* Apply my new font to the entire PDF 
+	* Note: It's important to include a font-family type at the end of your font chain (in this example it is sans-serif) in case your font doesn't contain a character your user has used. By default, the plugin will substitute those characters out for one this is supported.
+	**/
+	body {
+	font-family: Mefis, Arial, sans-serif;
+	}
+	</pre>
+</section>
+
+<h2>Templates</h2>
+
+<section id="templates-intro">
+	<h3>Getting Started</h3>
+	<p>Creating a custom template gives you ultimate control of your PDF documents. Use HTML and CSS to control the look and feel of your document. Add some PHP to integrate Formidable Pro fields and you’ve got a custom document tailored to your business.</p>
+	<h3>Creating your first template</h3>
+	<div><strong>Note: </strong>All template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder which the plugin automatically generates.</div>
+	<p>When we are developing template files we like to get all the Formidable Pro data first and work from there. To do this you can and append ‘&amp;data=1′ to the end of the URL while viewing any of the example template files through the admin area (change template=default-template.php in the URL to a custom template file). This will output the entire $form_data array which you can use throughout your custom template.</p>
+	<div><strong>Note: </strong> Adding &amp;data=1 to the default template files won’t show you the $form_data array; it will only work with templates labelled ‘example-‘.</div>
+	<div><strong>Note: </strong> We changed from using field IDs for accessing field data to field keys in version 1.4 of the plugin. This is not backwards compatible.</div>
+	<pre>/*
+	* An example of what &amp;data=1 will display
+	* Exactly like running print_r($form_data);
+	*/
+	Array
+	(
+	[form_title] =&gt; All Fields
+	[form_id] =&gt; 25
+	[lead_id] =&gt; 88
+	[date_created] =&gt; 10/05/2014
+	[date_created_usa] =&gt; 05/10/2014
+	[misc] =&gt; Array
+	(
+	[created_at] =&gt; 2014-05-10 04:09:51
+	[updated_at] =&gt; 2014-07-27 06:47:58
+	[updated_by] =&gt; 1
+	[user_id] =&gt; 1
+	[post_id] =&gt; 0
+	[description] =&gt; Array
+	(
+	[browser] =&gt; Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0
+	[referrer] =&gt; http://clients.blueliquiddesigns.com.au/formidable/wp-admin/admin.php?page=formidable-entries&amp;frm_action=new&amp;form=25
+
+	)
+
+	[ip] =&gt; 121.217.82.114
+	[parent_item_id] =&gt; 
+	)
+
+	[field] =&gt; Array
+	(
+	[d6k1qj.Single Line Text] =&gt; Array
+	(
+	[title] =&gt; Single Line Text
+	[value] =&gt; Single Line
+	[type] =&gt; text
+	)
+
+	[d6k1qj] =&gt; Array
+	(
+	[title] =&gt; Single Line Text
+	[value] =&gt; Single Line
+	[type] =&gt; text
+	)
+
+	[bfaovd.Paragraph Text] =&gt; Array
+	(
+	[title] =&gt; Paragraph Text
+	[value] =&gt; Paragraph Text
+	[type] =&gt; textarea
+	)
+
+	[bfaovd] =&gt; Array
+	(
+	[title] =&gt; Paragraph Text
+	[value] =&gt; Paragraph Text
+	[type] =&gt; textarea
+	)
+
+	[v502o9] =&gt; Array
+	(
+	[title] =&gt; Checkboxes
+	[value] =&gt; Option 1
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	)
+
+	[string] =&gt; Option 1
+	[options] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	[1] =&gt; Option 2
+	)
+
+	[type] =&gt; checkbox
+	)
+
+	[v502o9.Checkboxes] =&gt; Array
+	(
+	[title] =&gt; Checkboxes
+	[value] =&gt; Option 1
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	)
+
+	[string] =&gt; Option 1
+	[options] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	[1] =&gt; Option 2
+	)
+
+	[type] =&gt; checkbox
+	)
+
+	[estk1f] =&gt; Array
+	(
+	[title] =&gt; Radio Buttons
+	[value] =&gt; Option 2
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 2
+	)
+
+	[string] =&gt; Option 2
+	[options] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	[1] =&gt; Option 2
+	)
+
+	[type] =&gt; radio
+	)
+
+	[estk1f.Radio Buttons] =&gt; Array
+	(
+	[title] =&gt; Radio Buttons
+	[value] =&gt; Option 2
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 2
+	)
+
+	[string] =&gt; Option 2
+	[options] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	[1] =&gt; Option 2
+	)
+
+	[type] =&gt; radio
+	)
+
+	[mh1m9n] =&gt; Array
+	(
+	[title] =&gt; Dropdown
+	[value] =&gt; Option 1
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	)
+
+	[string] =&gt; Option 1
+	[options] =&gt; Array
+	(
+	[0] =&gt; 
+	[1] =&gt; Option 1
+	)
+
+	[type] =&gt; select
+	)
+
+	[mh1m9n.Dropdown] =&gt; Array
+	(
+	[title] =&gt; Dropdown
+	[value] =&gt; Option 1
+	[label] =&gt; Array
+	(
+	[0] =&gt; Option 1
+	)
+
+	[string] =&gt; Option 1
+	[options] =&gt; Array
+	(
+	[0] =&gt; 
+	[1] =&gt; Option 1
+	)
+
+	[type] =&gt; select
+	)
+
+	[m8pkp8.Email Address] =&gt; Array
+	(
+	[title] =&gt; Email Address
+	[value] =&gt; test@test.com
+	[type] =&gt; email
+	)
+
+	[m8pkp8] =&gt; Array
+	(
+	[title] =&gt; Email Address
+	[value] =&gt; test@test.com
+	[type] =&gt; email
+	)
+
+	[z9sw50.Website] =&gt; http://test.com
+	[z9sw50] =&gt; http://test.com
+	[vdq4wo.File Upload] =&gt; Array
+	(
+	[name] =&gt; 259.png
+	[url] =&gt; http://clients.blueliquiddesigns.com.au/formidable/wp-content/uploads/formidable/259.png
+	[path] =&gt; /home/blueliquiddesigns/domains/clients.blueliquiddesigns.com.au/public_html/formidable/wp-content/uploads/formidable/259.png
+	)
+
+	[vdq4wo] =&gt; Array
+	(
+	[name] =&gt; 259.png
+	[url] =&gt; http://clients.blueliquiddesigns.com.au/formidable/wp-content/uploads/formidable/259.png
+	[path] =&gt; /home/blueliquiddesigns/domains/clients.blueliquiddesigns.com.au/public_html/formidable/wp-content/uploads/formidable/259.png
+	)
+
+	[ac54cp.Rich Text] =&gt; Array
+	(
+	[title] =&gt; Rich Text
+	[value] =&gt; Rich Text editor
+	[type] =&gt; rte
+	)
+
+	[ac54cp] =&gt; Array
+	(
+	[title] =&gt; Rich Text
+	[value] =&gt; Rich Text editor
+	[type] =&gt; rte
+	)
+
+	[ikjtr3.Number] =&gt; Array
+	(
+	[title] =&gt; Number
+	[value] =&gt; 51
+	[type] =&gt; number
+	)
+
+	[ikjtr3] =&gt; Array
+	(
+	[title] =&gt; Number
+	[value] =&gt; 51
+	[type] =&gt; number
+	)
+
+	[trhlz8.Phone Number] =&gt; Array
+	(
+	[title] =&gt; Phone Number
+	[value] =&gt; 1231231234
+	[type] =&gt; phone
+	)
+
+	[trhlz8] =&gt; Array
+	(
+	[title] =&gt; Phone Number
+	[value] =&gt; 1231231234
+	[type] =&gt; phone
+	)
+
+	[xyh9dj.Date] =&gt; Array
+	(
+	[title] =&gt; Date
+	[value] =&gt; 2014-05-08
+	[type] =&gt; date
+	)
+
+	[xyh9dj] =&gt; Array
+	(
+	[title] =&gt; Date
+	[value] =&gt; 2014-05-08
+	[type] =&gt; date
+	)
+
+	[sqkmbi.Time] =&gt; Array
+	(
+	[title] =&gt; Time
+	[value] =&gt; 09:00 AM
+	[type] =&gt; time
+	)
+
+	[sqkmbi] =&gt; Array
+	(
+	[title] =&gt; Time
+	[value] =&gt; 09:00 AM
+	[type] =&gt; time
+	)
+
+	[7cjxh.Scale] =&gt; Array
+	(
+	[title] =&gt; Scale
+	[value] =&gt; 4
+	[type] =&gt; scale
+	)
+
+	[7cjxh] =&gt; Array
+	(
+	[title] =&gt; Scale
+	[value] =&gt; 4
+	[type] =&gt; scale
+	)
+
+	[ssx6ie.Data from Entries] =&gt; Array
+	(
+	[title] =&gt; Data from Entries
+	[value] =&gt; May 18, 2014
+	[type] =&gt; data
+	)
+
+	[ssx6ie] =&gt; Array
+	(
+	[title] =&gt; Data from Entries
+	[value] =&gt; May 18, 2014
+	[type] =&gt; data
+	)
+
+	[zqtfhm.Hidden Field] =&gt; Array
+	(
+	[title] =&gt; Hidden Field
+	[value] =&gt; hidden field
+	[type] =&gt; hidden
+	)
+
+	[zqtfhm] =&gt; Array
+	(
+	[title] =&gt; Hidden Field
+	[value] =&gt; hidden field
+	[type] =&gt; hidden
+	)
+
+	[bji1oh.Password] =&gt; Array
+	(
+	[title] =&gt; Password
+	[value] =&gt; test
+	[type] =&gt; password
+	)
+
+	[bji1oh] =&gt; Array
+	(
+	[title] =&gt; Password
+	[value] =&gt; test
+	[type] =&gt; password
+	)
+
+	[tjg8rs.Tags] =&gt; Array
+	(
+	[title] =&gt; Tags
+	[value] =&gt; test, test2, test3
+	[type] =&gt; tag
+	)
+
+	[tjg8rs] =&gt; Array
+	(
+	[title] =&gt; Tags
+	[value] =&gt; test, test2, test3
+	[type] =&gt; tag
+	)
+
+	[uvhlcl] =&gt; Array
+	(
+	[title] =&gt; Table
+	[table_html] =&gt; <div id="frm-table-container-1254">
+	<table id="frm-table-1254">
+	<thead>
+	<tr>
+	<th>&nbsp;</th>
+	<th>Column 1</th>
+	<th>Column 2</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+	<th>Row 1</th>
+	<td>Data R1C1</td>
+	<td>Data R1C2</td>
+	</tr>
+	<tr>
+	<th>Row 2</th>
+	<td>Data R2C1</td>
+	<td>Data R2C2</td>
+	</tr>
+	</tbody>
+	</table>
+	</div>
+	[table_cells] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[col_1] =&gt; Column 1
+	[col_2] =&gt; Column 2
+	)
+
+	[1] =&gt; Array
+	(
+	[row_1] =&gt; Row 1
+	[row_2] =&gt; Row 2
+	)
+
+	)
+
+	[table_data] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[0] =&gt; Data R1C1
+	[1] =&gt; Data R1C2
+	)
+
+	[1] =&gt; Array
+	(
+	[0] =&gt; Data R2C1
+	[1] =&gt; Data R2C2
+	)
+
+	)
+
+	)
+
+	[uvhlcl.Table] =&gt; Array
+	(
+	[title] =&gt; Table
+	[table_html] =&gt; <div id="frm-table-container-1254">
+	<table id="frm-table-1254">
+	<thead>
+	<tr>
+	<th>&nbsp;</th>
+	<th>Column 1</th>
+	<th>Column 2</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+	<th>Row 1</th>
+	<td>Data R1C1</td>
+	<td>Data R1C2</td>
+	</tr>
+	<tr>
+	<th>Row 2</th>
+	<td>Data R2C1</td>
+	<td>Data R2C2</td>
+	</tr>
+	</tbody>
+	</table>
+	</div>
+	[table_cells] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[col_1] =&gt; Column 1
+	[col_2] =&gt; Column 2
+	)
+
+	[1] =&gt; Array
+	(
+	[row_1] =&gt; Row 1
+	[row_2] =&gt; Row 2
+	)
+
+	)
+
+	[table_data] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[0] =&gt; Data R1C1
+	[1] =&gt; Data R1C2
+	)
+
+	[1] =&gt; Array
+	(
+	[0] =&gt; Data R2C1
+	[1] =&gt; Data R2C2
+	)
+
+	)
+
+	)
+
+	[uvhlcl] =&gt; Array
+	(
+	[title] =&gt; Table
+	[table_html] =&gt; <div id="frm-table-container-1254">
+	<table id="frm-table-1254">
+	<thead>
+	<tr>
+	<th>&nbsp;</th>
+	<th>Column 1</th>
+	<th>Column 2</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+	<th>Row 1</th>
+	<td>Data R1C1</td>
+	<td>Data R1C2</td>
+	</tr>
+	<tr>
+	<th>Row 2</th>
+	<td>Data R2C1</td>
+	<td>Data R2C2</td>
+	</tr>
+	</tbody>
+	</table>
+	</div>
+	[table_cells] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[col_1] =&gt; Column 1
+	[col_2] =&gt; Column 2
+	)
+
+	[1] =&gt; Array
+	(
+	[row_1] =&gt; Row 1
+	[row_2] =&gt; Row 2
+	)
+
+	)
+
+	[table_data] =&gt; Array
+	(
+	[0] =&gt; Array
+	(
+	[0] =&gt; Data R1C1
+	[1] =&gt; Data R1C2
+	)
+
+	[1] =&gt; Array
+	(
+	[0] =&gt; Data R2C1
+	[1] =&gt; Data R2C2
+	)
+
+	)
+
+	)
+
+	)
+
+	[kck58s] =&gt; Section Heading
+	[signature] =&gt; Array
+	(
+	[n4sfhv] =&gt; Array
+	(
+	[img] =&gt; <img src="http://clients.blueliquiddesigns.com.au/formidable/wp-content/uploads/formidable/signatures/signature-1255-88.png" alt="">
+	[url] =&gt; http://clients.blueliquiddesigns.com.au/formidable/wp-content/uploads/formidable/signatures/signature-1255-88.png
+	[path] =&gt; /home/blueliquiddesigns/domains/clients.blueliquiddesigns.com.au/public_html/formidable/wp-content/uploads/formidable/signatures/signature-1255-88.png
+	)
+
+	)
+	)
+	</pre>
+	<p><strong>Accessing the above $form_data array</strong></p>
+	<pre>/* Getting generic information about the entry */
+	&lt;?php echo $form_data['form_title']; ?&gt;
+	&lt;?php echo $form_data['date_created']; ?&gt;
+	&lt;?php echo $form_data['date_created_usa']; ?&gt;
+
+	&lt;?php echo $form_data['misc']['created_at']; ?&gt;
+	&lt;?php echo $form_data['misc']['updated_at']; ?&gt;
+	&lt;?php echo $form_data['misc']['user_id']; ?&gt;
+	&lt;?php echo $form_data['misc']['post_id']; ?&gt;
+	&lt;?php echo $form_data['misc']['description']['browser']; ?&gt;
+	&lt;?php echo $form_data['misc']['description']['referrer']; ?&gt;
+	&lt;?php echo $form_data['misc']['ip']; ?&gt;
+	&lt;?php echo $form_data['misc']['parent_item_id']; ?&gt;
+
+	/* Getting standard input title and value */
+	&lt;?php echo $form_data['field']['d6k1qj']['title']; ?&gt;
+	&lt;?php echo $form_data['field']['d6k1qj']['value']; ?&gt;
+
+	/* Accessing Checkboxes and Dropdowns */
+	&lt;?php echo $form_data['field']['v502o9']['string']; ?&gt;
+	&lt;?php foreach($form_data['field']['v502o9']['value'] as $checkbox) {
+	echo $checkbox .'<br>';
+	} ?&gt;
+
+	/* You can also access the full list of options from those fields */
+	&lt;?php print_r($form_data['field']['v502o9']['options']); ?&gt;
+
+	/* Accessing Upload Field Values */
+	&lt;?php echo $form_data['field']['vdq4wo']['name']; ?&gt;
+	&lt;?php echo $form_data['field']['vdq4wo']['url']; ?&gt;
+	&lt;?php echo $form_data['field']['vdq4wo']['path']; ?&gt;
+
+	/* Accessing Signature Data */
+	&lt;?php echo $form_data['signature']['n4sfhv']['img']; ?&gt;
+	&lt;?php echo $form_data['signature']['n4sfhv']['url']; ?&gt;
+	&lt;?php echo $form_data['signature']['n4sfhv']['path']; ?&gt;
+
+	/* Accessing Formidable Plus table data */
+	&lt;?php echo $form_data['field']['uvhlcl']['title']; ?&gt;
+	&lt;?php echo $form_data['field']['uvhlcl']['table_html']; ?&gt;
+
+	/* You can also loop through the columns and rows to build your own table using the table_cells and table_data arrays */
+	/* Note: index 0 of table_cells is the column names and index 1 is the row names */
+	&lt;?php print_r($form_data['field']['uvhlcl']['table_cells']); ?&gt;
+	&lt;?php print_r($form_data['field']['uvhlcl']['table_data']); ?&gt;
+
+	</pre>
+	<p>Once you have your form data you can start developing your custom template. Copy and rename one of the example template files which are all prepended with ‘example-‘. There are a number of example template files for you to use and we’ve documented them all <a href="#basic-html">in the next steps</a>.</p>
+	<h4>What’s next?</h4>
+	<p>Once you have created your custom template you will need to initialise it within your configuration file.</p>
+	<p><strong>Basic Configuration Example</strong></p>
+	<pre>$fp_pdf_config[] = array(
+	'form_id' =&gt; 1,
+	'notifications' =&gt; true,
+	'template' =&gt; 'example-template.php'
+	);
+	</pre>
+	<p>For more information about configuring the plugin see the <a href="#installation-configuration">Installation and Configuration documentation</a>.</p>
+</section>
+
+<section id="basic-html">
+	<h3>Basic HTML</h3>
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area. http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-basic-html01.php</strong></div>
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p>Template: <em>example-basic-html01.php</em></p>
+	<p>This is just straight HTML like you’re use to. The template shows most valid HTML elements that you can use when developing your custom template.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-basic-html01.php">View Example</a></p>
+	<p>To see the full list of supported <a href="http://mpdf1.com/manual/index.php?tid=256">HTML tags</a> and <a href="http://mpdf1.com/manual/index.php?tid=257">attributes</a> view the mPDF documentation.</p>
+</section>
+
+<section id="background-images-rounded-corners">
+	<h3>Background Images and Rounded Corners</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area. http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-backgrounds-and-borders02.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p>Template: <em>example-backgrounds-and-borders02.php</em></p>
+	<p>You can define linear and radial gradients on all block-level elements. Along with this, it supports border-radius so you can easily add rounded corners to your PDFs.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-backgrounds-and-borders02.php">View Example</a></p>
+	<h3>Defining Gradients</h3>
+	<p>mPDF follows the CSS3 specification for defining gradients. You can set the gradient using background: linear-gradient(…) and background: radial-gradient(…).</p>
+	<p><strong>Example:</strong></p>
+	<pre>/* start linear gradient from the bottom and render upwards – blue at bottom and white at the top */
+	background: linear-gradient(bottom, #0b91c2, #FFFFFF);
+
+	/* start linear gradient from the top and render downwards. #e1e1e1 will cover 65% of the area. */
+	background: linear-gradient(top, #e1e1e1 65%, #c7c7c7);
+
+	/* run a linear gradient at 45 degrees to the element. */
+	background: linear-gradient(45deg, blue, yellow);
+
+	/* Using three colours in the gradient and controlling the percentage they cover. */
+	background: linear-gradient(top, blue, yellow %75, red %10);
+
+	/*create a radial gradient with the circle in the centre */
+	background: radial-gradient(center circle, red, green);
+
+	/*create a radial gradient with the circle in the top left */
+	background: radial-gradient(center circle, red, green);
+
+	/* have the circle in the bottom left corner using three colours */
+	background: radial-gradient(farthest-side at left bottom, red, yellow 50px, green);
+	</pre>
+	<div><strong>Note: </strong>Background-colour and background-image set on the element will cover the whole page i.e. not inside the “margins”.</div>
+	<div><strong>Note: </strong>Background colour is the only property that can be set on inline elements. Background image and gradient can be set on block elements, @page and the body element.</div>
+	<div><strong>Note: </strong>Background-images support JPG, GIF, PNG, WMF and SVG images.</div>
+	<p>You can view the W3 specification which details the usage of these CSS statements.</p>
+	<ul>
+	<li>CSS3 linear gradients – <a href="http://dev.w3.org/csswg/css3-images/#linear-gradients">http://dev.w3.org/csswg/css3-images/#linear-gradients</a></li>
+	<li>CSS3 radial gradients – <a href="http://dev.w3.org/csswg/css3-images/#radial-gradients">http://dev.w3.org/csswg/css3-images/#radial-gradients</a><i> </i></li>
+	</ul>
+	<h3>Rounded Corners</h3>
+	<p><em>mPDF also supports the CSS3’s border-radius which is another bonus. You can use the default border radius syntax to define all corners:</em><em></em></p>
+	<pre>border-radius: 4em;</pre>
+	<p>Which is equivalent to:</p>
+	<pre>border-top-left-radius:&nbsp;&nbsp;&nbsp;&nbsp; 4em;
+	border-top-right-radius:&nbsp;&nbsp;&nbsp; 4em;
+	border-bottom-right-radius: 4em;
+	border-bottom-left-radius:&nbsp; 4em;
+	</pre>
+	<p>For more details about background images/gradients and border radius support please <a href="http://mpdf1.com/manual/index.php?tid=384">view the mPDF documentation</a>.</p>
+</section>
+
+<section id="images">
+	<h3>Images</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area.
+	http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-images03.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p><em>Template: example-images03.php</em></p>
+	<p>The image example displays all supported image formats in mPDF, as well as additional CSS properties like opacity and rotate.</p>
+	<div><strong>Note: </strong> Support image formats include GIF, PNG, JPG, WMF, SVG, BMP</div>
+	<div><strong>Note: </strong> Images in mPDF are inline elements.</div>
+	<div><strong>Warning: </strong> Images can be memory intensive. If you are <a href="#memory-problems">concerned about performance</a> you should always use the JPG format.</div>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-images03.php">View Example</a></p>
+	<h3>Usage</h3>
+	<p>Along with using the &lt;img /&gt; tag in your template the following special cases apply:</p>
+	<ul>
+	<li><a href="#headers-footers">Headers &amp; Footers</a></li>
+	<li><a href="#background-images-rounded-corners">CSS background-image</a></li>
+	</ul>
+	<div><strong>Note: </strong>Images in the header and footer can extend beyond the margin. You should use the <a href="http://mpdf1.com/manual/index.php?tid=307">@page CSS element</a> to create suitable margins.</div>
+	<h3>Float Support</h3>
+	<p>There is partial support for floating images in mPDF however the following limitations apply:</p>
+	<ul>
+	<li>You can only have one floated image left and one floated right per container.</li>
+	<li>Unlike your browser (which will overflow the image out of the container), the containing HTML element is extended at the bottom if necessary to enclose the floated image.</li>
+	<li>Floats are ignored if the image is too wide for the container, inside a table, columns are on, or div page-break-inside: avoid is set.</li>
+	</ul>
+	<p>For more information about image support <a href="http://mpdf1.com/manual/index.php?tid=245">view the mPDF documentation</a>.</p>
+</section>
+
+<section id="tables">
+	<h3>Tables</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area. http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-tables04.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p><em>Template: example-tables04.php</em></p>
+	<p>mPDF includes some advanced table-based features include auto scaling if tables extend past the PDF width, 90 degree rotation and nesting tables.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-tables04.php">View Example</a></p>
+	<h3>Rotating Table</h3>
+	<p>Tables can be rotated 90 degrees so they fit nicely on portrait documents. This feature can be applied using the CSS style rotate:90|-90; property.</p>
+	<pre>table {
+	rotate: 90:-90;
+	}
+	</pre>
+	<h3>Autosizing</h3>
+	<p>If a table’s minimum width is too wide for the outer container it will automatically reduce the font size in order to fit. The minimum width is calculated by the sum of column widths required to fit the longest single word in the column.</p>
+	<div><strong>Note: </strong>mPDF’s auto sizing function is smart and has a minimum font-size set in its configuration that prevents the font size from shrinking so much that it’s unreadable.</div>
+	<p>If you want to disable autosizing for a particular table you can add the autosize=”1” attribute to the table element – &lt;table autosize=”1″&gt;</p>
+	<h3>Repeating Header and Footers</h3>
+	<p>If a table extends across multiple pages the &lt;thead&gt;…&lt;/thead&gt; and &lt;tfoot&gt;…&lt;/tfoot&gt; elements will be appended and prepended to the top and bottom of the table on each page. This can be seen in the example-tables04.php template.</p>
+	<p><a href="http://mpdf1.com/manual/index.php?tid=77">Please read the mPDF table documentation</a> for additional details on table configuration.</p>
+	</section>
+
+	<section id="floats-fixed-positioning">
+	<h3>Floats and Fixed Positioning</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area.
+	http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-float-and-positioning05.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p><em>Template: example-float-and-positioning05.php</em></p>
+	<p>Floats and fixed positioning is partially supported in mPDF but doesn’t conform to all requirements of the W3 CSS2 specification. </p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-float-and-positioning05.php">View Example</a></p>
+	<h3>Floats Limitations</h3>
+	<ul>
+	<li>Only block elements can be floated.</li>
+	<li>Floats only work if a width is set on the element</li>
+	<li>By default non-floated elements will have margins applied so they are inline with the floated elements – margin-left: {floatWidth}; is applied.</li>
+	</ul>
+	<div><strong>Note: </strong>The width set doesn’t include padding, margin or border so if you have two floats with width=50% and either of them has padding, margin or border, they will not fit side by side on the page.</div>
+	<h3>Clearing Floats</h3>
+	<p>The CSS property ‘clear’ can be set on all block elements and &lt;hr&gt; or &lt;br &gt;.</p>
+	<h3>Positioning Limitations</h3>
+	<p>The CSS property “position” supports the ‘fixed’ and ‘absolute’ options. The absolute parameter will treat the entire page as the containing element while fixed is bound to the margin container.</p>
+	<ul>
+	<li>Only block-level elements can be positioned.</li>
+	<li>All positioning is relative to the current page.</li>
+	<li>Setting ‘overflow: auto’ causes text to auto fit within the block size.</li>
+	<li>You cannot nest fixed position or floated elements inside other fixed position elements.</li>
+	</ul>
+	<div><strong>Note: </strong>Using overflow:auto can cause mPDF to be very slow as it attempts to write the same HTML reiteratively until it finds a reasonable fit to the available size.</div>
+	<h3>Rotating Positioned Elements</h3>
+	<p>Like the CSS table ‘rotate’ property, positioned elements can also be rotated 90 degrees.</p>
+	<pre>.class {
+	rotate: 90|-90;
+	}
+	</pre>
+	<h3>mPDF Documentation</h3>
+	<ul>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=401">CSS Floats</a></li>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=401">CSS Fixed Positioning</a></li>
+	</ul>
+</section>
+
+<section id="headers-footers">
+	<h3>Headers and Footers</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area.
+	http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-header-and-footer_06.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p><em>Templates</em></p>
+	<ul>
+	<li>example-header-and-footer_06.php</li>
+	<li>example-advanced-headers_07.php</li>
+	</ul>
+	<p>mPDF has advanced header and footer control that allows you to display the page number, total number of pages and alternate the header and footer based on a page’s ID or odd and even value.</p>
+	<div><strong>Note: </strong>See reserved variables for more information about displaying the current page number and total pages (link).</div>
+	<h3>Basic Example</h3>
+	<p>Headers and footers should be defined right after the &lt;body&gt; tag of the document before any other HTML is outputted. mPDF uses the custom HTML element <a href="http://mpdf1.com/manual/index.php?tid=177">&lt;htmlpageheader&gt;</a> and <a href="http://mpdf1.com/manual/index.php?tid=178">&lt;htmlpagefooter&gt;</a> to generate PDF header and footer templates. Once defined they should be set with <a href="http://mpdf1.com/manual/index.php?tid=179">&lt;sethtmlpageheader&gt;</a> and <a href="http://mpdf1.com/manual/index.php?tid=180">&lt;sethtmlpagefooter&gt;</a>, respectively.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-header-and-footer_06.php">View Example</a></p>
+	<p><strong>&lt;htmlpageheader name=”CustomName”&gt;…&lt;/htmlpageheader&gt;</strong></p>
+	<div><strong>Note: </strong>Do not name any header starting with html_. This prefix is reserved for use in <a href="http://mpdf1.com/manual/index.php?tid=307">@page</a>.</div>
+	<p>This element allows you to define a header template for later use in the document. The attribute name is optional if only using one header template throughout the document. Everything inside the block will be rendered in the header.</p>
+	<p><em>Example</em></p>
+	<pre><htmlpageheader name="myHTMLHeader1">
+	<table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;"><tbody><tr>
+	<td width="50%">Left header p <span style="font-size:14pt;">{PAGENO}</span></td>
+	<td width="50%" style="text-align: right;"><span style="font-weight: bold;">myHTMLHeader1</span></td>
+	</tr></tbody></table>
+	</htmlpageheader>
+	</pre>
+	<p><b>&lt;htmlpagefooter name=”CustomName”&gt;…&lt;/htmlpagefooter&gt;</b></p>
+	<div><strong>Note: </strong>Do not name any footer starting with html_&nbsp;&nbsp; This prefix is reserved for use in <a href="http://mpdf1.com/manual/index.php?tid=307">@page</a>.</div>
+	<p>This element allows you to define a footer template for later use in the document. The attribute name is optional if only using one footer template throughout the document. Everything inside the block will be rendered in the footer.</p>
+	<p><i>Example</i></p>
+	<pre><htmlpagefooter name="myFooter1">
+	<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt;
+	color: #000000; font-weight: bold; font-style: italic;"><tbody><tr>
+	<td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+	<td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+	<td width="33%" style="text-align: right; ">My document</td>
+	</tr></tbody></table>
+	</htmlpagefooter>
+	</pre>
+	<p><b>&lt;sethtmlpageheader [ name ] [ page ] [ value ] [ show-this-page ] /&gt;</b></p>
+	<p>This element should be defined after setting the &lt;htmlpageheader&gt; and &lt;htmlpagefooter&gt; elements. For basic header usage you’ll usually only pass the show-this-page=”1” and value=”1” attributes.</p>
+	<p><i>Example</i></p>
+	<pre><!-- sets the default header -->
+	<sethtmlpageheader value="1" show-this-page="1">
+
+	<!-- sets a header with a name of ‘customheader’ -->
+	<sethtmlpageheader name="customheader" value="1" show-this-page="1">
+	</sethtmlpageheader></sethtmlpageheader></pre>
+	<p><i>Advanced Usage</i></p>
+	<p>You can also define a different header on odd and even pages of the document using the page=”O|E” attribute. The show-this-page=”1” attribute shouldn’t be passed when defining even pages as the starting page, page 1, is odd.</p>
+	<pre><!-- sets a header on even pages and a different header on odd pages using the ‘page’ attribute -->
+	<sethtmlpageheader name="myHTMLHeader1" page="O" value="on" show-this-page="1">
+	<sethtmlpageheader name="myHTMLHeader1Even" page="E" value="on">
+	</sethtmlpageheader></sethtmlpageheader></pre>
+	<p><b>&lt; sethtmlpagefooter [ name ] [ page ] [ value ] [ show-this-page ] /&gt;</b></p>
+	<p>This element should be defined after setting the &lt;htmlpageheader&gt; and &lt;htmlpagefooter&gt; elements. For basic footer usage you usually pass the show-this-page=”1”&nbsp; and value=”1” attributes.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-advanced-headers_07.php">View Example</a></p>
+	<p><i>Example</i></p>
+	<pre><!-- sets the default footer -->
+	<sethtmlpagefooter value="1" show-this-page="1">
+
+	<!-- sets a footer with a name of ‘customfooter’ -->
+	<sethtmlpagefooter name="customfooter" value="1" show-this-page="1">
+	</sethtmlpagefooter></sethtmlpagefooter></pre>
+	<p><i>Advanced Usage</i></p>
+	<p>You can also define a different footer on odd and even pages of the document using the page=”O|E” attribute. The show-this-page=”1” attribute shouldn’t be passed when defining even pages as page 1 is odd.</p>
+	<pre><!-- sets a footer on even pages and a different footers on odd pages using the ‘page’ attribute -->
+	<sethtmlpagefooter name="myHTMLFooter1" page="O" value="on" show-this-page="1">
+	<sethtmlpagefooter name="myHTMLFooter1Even" page="E" value="on">
+	</sethtmlpagefooter></sethtmlpagefooter></pre>
+	<h3>mPDF Documentation</h3>
+	<ul>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=313">Header and Footer Overview</a></li>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=177">&lt;htmlpageheader&gt;</a></li>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=178">&lt;htmlpagefooter&gt;</a></li>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=179">&lt;sethtmlpageheader&gt;</a></li>
+	<li><a href="http://mpdf1.com/manual/index.php?tid=180">&lt;sethtmlpagefooter&gt;</a></li>
+	</ul>
+</section>
+
+<section id="change-document-size">
+	<h3>Change Document Size</h3>
+
+	<div><strong>Note: </strong>To view custom templates in your browser append &amp;template=template-name.php to the URL when viewing PDFs via the admin area.
+	http://www.test.com/?pdf=1&amp;fid=1&amp;lid=102<strong>&amp;template=example-backgrounds-and-borders02.php</strong></div>
+
+	<div><strong>Warning: </strong>You need to be logged into the WordPress Admin Area and have Formidable Pro viewing privileges – by default Editors and Administrators have this privilege – to view custom templates this way.</div>
+	<div><strong>Note: </strong>All example template files are located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<h3>Overview</h3>
+	<p><em>Example: example-different-page-size_08.php</em></p>
+	<p>mPDF allows the document size and layout to be changes on a per-page basis, giving you finite control over the output of your PDF document.</p>
+	<p>This feature can be controlled using the &lt;pagebreak&gt; or <a href="http://mpdf1.com/manual/index.php?tid=307">@page</a> element. However the easiest way to do this is using &lt;pagebreak&gt; and that is what we will cover.</p>
+	<p><a href="http://formidablepropdfextended.com/?gf_pdf=print-entry&amp;fid=11&amp;lid=857&amp;template=example-different-page-size_08.php">View Example</a></p>
+	<h3>Example</h3>
+	<pre><!-- set the next page to A6 -->
+	<pagebreak sheet-size="A6">
+
+	<!-- set the next page using a custom size -->
+	<pagebreak sheet-size="70mm 150mm">
+
+	<!-- set the next page to landscape -->
+	<pagebreak orientation="landscape">
+
+	</pagebreak></pagebreak></pagebreak></pre>
+	<p>While the examples above are basic the &lt;pagebreak&gt; element is actually quite complex so <a href="http://mpdf1.com/manual/index.php?tid=307">we advice you read the mPDF documentation</a> which covers this element in detail.</p>
+</section>
+
+<section id="display-pdf-in-browser">
+	<h2>Display PDF in Browser</h2>
+	<p>The generated PDF can easily and securely be displayed in a users browser once the form has been submitted using the Formidable Pro confirmation or redirect setting.</p>
+	<h2>Passing Form Values</h2>
+	<p>You’ll need to pass all of the following values to the URL in order to display the PDF in the browser:</p>
+	<ul>
+	<li>fid=1 (change to your form ID)</li>
+	<li>lid=[id]</li>
+	<li>pdf=1</li>
+	<li>template=custom-template.php</li>
+	</ul>
+	<p>The <em>lid</em> parameter takes information using the [id] field, while <em>fid</em> and <em>pdf</em> won’t change. The template parameter will refer to the template file you would like to use when generating the PDF.</p>
+	<h2>Example</h2>
+	<p>To tell Formidable Pro where to redirect you need to go to your form’s settings page and under ‘General’ you’ll find the heading <em>Action After Form Submission</em>. You have the choice of either building a link to your PDF in the ‘Display a Message’ section or redirecting directly to the PDF using the ‘Redirect to URL’ option.</p>
+	<p><strong>Display a Message Option</strong><br>
+	In the confirmation message text box I would create a link to the PDF:</p>
+	<pre><!-- Displays PDF in browser -->
+
+	http://www.yourwebsite.com/?pdf=1&amp;fid=1&amp;lid=[id]&amp;template=example-template.php
+
+	<!-- OR -->
+	<!-- Prompt user to download PDF -->
+
+	http://www.yourwebsite.com/?pdf=1&amp;fid=1&amp;lid=[id]&amp;template=example-template.php&amp;download=1
+
+	</pre>
+	<p><strong>Redirect to URL Option</strong><br>
+	This is very similar to the above method, expect you don’t need to create an anchor tag:</p>
+	<pre>http://www.yourwebsite.com/?pdf=1&amp;fid=1&amp;lid=[id]&amp;template=example-template.php
+
+	OR
+
+	http://www.yourwebsite.com/?pdf=1&amp;fid=1&amp;lid=[id]&amp;template=example-template.php&amp;download=1
+
+	</pre>
+	<h2>Security</h2>
+	<p>To prevent unwanted users accessing sensitive data each PDF displayed using this method will check two things:</p>
+	<ol>
+	<li>If the user is logged in and has read privileges of Formidable Pro entries</li>
+	<li>Or, if the user’s IP address matches the IP address on file for the entry.</li>
+	</ol>
+</section>
+
+<section id="reserved-template-variables">
+	<h2>Reserved Template Variables</h2>
+	<p>mPDF has a number of reserved keywords that can be placed in your HTML templates that allows you to output the page number , total document pages the date and the sum of a table’s column.</p>
+	<table>
+	<colgroup>
+	<col>
+	<col> </colgroup>
+	<tbody>
+	<tr>
+	<th>Variable</th>
+	<th>Description</th>
+	</tr>
+	<tr>
+	<td>{nb​}</td>
+	<td>Will return the total number of pages in the PDF document.</td>
+	</tr>
+	<tr>
+	<td>{PAGENO}</td>
+	<td>Will be replaced by the current page number. Only available in the header or footer.</td>
+	</tr>
+	<tr>
+	<td>{DATE d/m/Y}</td>
+	<td>Will be replaced by today’s date. The date format can use any value that PHP’s <a href="http://www.php.net/manual/en/function.date.php">date()</a> function uses. Only available in the header or footer. We advice you use the date passed through the $form_data array instead.</td>
+	</tr>
+	<tr>
+	<td>{colsum}, {colsum<i>N</i>}</td>
+	<td>The total values in the corresponding column will output at the end of the table. Only available in a table footer – &lt;tfoot&gt;&lt;td&gt;{colsum}&lt;/td&gt;&lt;/tfoot&gt;.Note: An optional integer <i>N </i>parameter will specify a fixed number of decimal places.</td>
+	</tr>
+	</tbody>
+	</table>
+	<p>For the full details about reserved template variables <a href="http://mpdf1.com/manual/index.php?tid=303">view the mPDF documentation</a>.</p>
+</section>
+
+<section id="known-issues">
+	<h2>Known Issues and Limitations</h2>
+	<h3>Block and Inline HTML</h3>
+	<p>All HTML elements have been hardcoded to either block or inline elements. This cannot be changed with CSS (you can’t set display: block on an inline element).</p>
+	<h3>Tables</h3>
+	<p>Block elements (e.g. DIV or P) are not supported inside tables. The content is displayed, but any CSS properties which apply to block elements are ignored (e.g. borders, padding, margins etc).</p>
+	<h3>Block Floating/Positioning</h3>
+	<p>Blocks which are defined as position:absolute, fixed or float have only limited support.</p>
+	<h3>Corrupt PDF File</h3>
+	<p>This is usually caused by PHP errors generated while the PDF is created. The easiest fix is to turn off PHP error reporting and log the errors to a file (something that should be done in all production environments).</p>
+	<p>To debug the issue save the PDF to disk and open it up in a text document. The start of the PDF should contain an error message which will help narrow down the issue.</p>
+	<h3>Text being replaced by random numbers / dates.</h3>
+	<p>mPDF uses a <a href="http://mpdf1.com/manual/index.php?tid=303">number of reserved variables</a> which can be inserted into a template and replaced when generating a PDF.</p>
+	<h3>Blank Screen and no PDF</h3>
+	<p>If you are getting a blank screen when attempting to generate a PDF there may be a script error. Set WP_DEBUG to true in your wp-config.php file and try view the PDF again.</p>
+</section>
+
+<section id="memory-problems">
+	<h2>Memory Problems</h2>
+	<p>Formidable Pro PDF Extended is very memory intensive and it isn’t uncommon to have memory issues on shared hosting services. The best way to solve memory issues is to increase memory to <a href="#requirements">the recommended 128MB</a> but this isn’t always possible.</p>
+	<h3>Things you can do…</h3>
+	<div><strong>Note: </strong>All the following constants are located at the bottom of the <a href="#constants">configuration.php file</a> which is located in your active theme’s FORMIDABLE_PDF_TEMPLATES folder.</div>
+	<ol>
+	<li>If your template uses a large tables you can set FP_PDF_ENABLE_SIMPLE_TABLES to true which will simplify them.</li>
+	<li>Another option is to set FP_PDF_DISABLE_FONT_SUBSTITUTION to true which will embed the full font file directly into the PDF. This has the negative impact of increasing the PDF’s total size. PDFs displaying only English can negate this effect by setting the font to Helvetica.</li>
+	<li>If you are still having issues you can set FP_PDF_ENABLE_MPDF_LITE to true in configuration.php which will strip out some of the more advanced features from the package such as advanced table borders, terms and conditions, columns, index, bookmarks and barcodes.</li>
+	<li>As a last resort you can try set FP_PDF_ENABLE_MPDF_TINY to true which will only load the bare minimum features. Along with the features disabled by the LITE package there’s no positioning, float, watermark or form support.</li>
+	</ol>
+	<p>You should also keep in mind the following when creating your template files.</p>
+	<ol>
+	<li>If using images the best format to use is JPG, followed by PNGs that aren’t interlaced and have no alpha channel. Keep away from GIF files and interlaced or alpha channel PNGs as they require a lot more memory to process.</li>
+	<li>Limit the number of fonts used – try stick to one. If you can, you should use the base PDF fonts – Times, Helvetica or Courier – which don’t need to be embedded into the PDF.<br><strong>Note:</strong> the base fonts have limited support for non-Western European languages.</li>
+	<li>Instead of using HTML attributes to format the PDF you should use CSS styles.</li>
+	<li>Don’t use the CSS property “overflow” as it will slow down the PDF generation time</li>
+	</ol>
+</section>
+
+</body></html>
