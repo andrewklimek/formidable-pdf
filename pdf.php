@@ -26,15 +26,26 @@ GNU General Public License for more details.
 if(!defined('FP_PDF_EXTENDED_VERSION')) define('FP_PDF_EXTENDED_VERSION', '1.7.0');
 if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '2.0' );
 if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6');
+
 if(!defined('FP_PDF_PLUGIN_DIR')) define('FP_PDF_PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 if(!defined('FP_PDF_PLUGIN_URL')) define('FP_PDF_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 if(!defined('FP_PDF_SETTINGS_URL')) define("FP_PDF_SETTINGS_URL", site_url() .'/wp-admin/admin.php?page=formidable-settings#PDF_settings');
-if(!defined('FP_PDF_SAVE_FOLDER')) define('FP_PDF_SAVE_FOLDER', 'FORMIDABLE_PDF_TEMPLATES');
-if(!defined('FP_PDF_SAVE_LOCATION')) define('FP_PDF_SAVE_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/output/');
-if(!defined('FP_PDF_FONT_LOCATION')) define('FP_PDF_FONT_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/fonts/');
-if(!defined('FP_PDF_TEMPLATE_LOCATION')) define('FP_PDF_TEMPLATE_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/');
-if(!defined('FP_PDF_TEMPLATE_URL_LOCATION')) define('FP_PDF_TEMPLATE_URL_LOCATION', get_stylesheet_directory_uri().'/'. FP_PDF_SAVE_FOLDER .'/');
 if(!defined('FP_PDF_EXTENDED_PLUGIN_BASENAME')) define('FP_PDF_EXTENDED_PLUGIN_BASENAME', plugin_basename(__FILE__));
+
+// old location
+// if(!defined('FP_PDF_SAVE_FOLDER')) define('FP_PDF_SAVE_FOLDER', 'FORMIDABLE_PDF_TEMPLATES');
+// if(!defined('FP_PDF_TEMPLATE_LOCATION')) define('FP_PDF_TEMPLATE_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/');// wp_get_upload_dir()
+// if(!defined('FP_PDF_SAVE_LOCATION')) define('FP_PDF_SAVE_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/output/');
+// if(!defined('FP_PDF_FONT_LOCATION')) define('FP_PDF_FONT_LOCATION', get_stylesheet_directory().'/'.FP_PDF_SAVE_FOLDER.'/fonts/');
+// if(!defined('FP_PDF_TEMPLATE_URL_LOCATION')) define('FP_PDF_TEMPLATE_URL_LOCATION', get_stylesheet_directory_uri().'/'. FP_PDF_SAVE_FOLDER .'/');
+
+// new location
+$upload_dir = wp_get_upload_dir();
+if(!defined('FP_PDF_SAVE_FOLDER')) define('FP_PDF_SAVE_FOLDER', 'formidable-pdf');
+if(!defined('FP_PDF_TEMPLATE_LOCATION')) define('FP_PDF_TEMPLATE_LOCATION', $upload_dir['basedir'].'/'.FP_PDF_SAVE_FOLDER.'/');// wp_get_upload_dir()
+if(!defined('FP_PDF_SAVE_LOCATION')) define('FP_PDF_SAVE_LOCATION', FP_PDF_TEMPLATE_LOCATION .'output/');
+if(!defined('FP_PDF_FONT_LOCATION')) define('FP_PDF_FONT_LOCATION', FP_PDF_TEMPLATE_LOCATION .'fonts/');
+if(!defined('FP_PDF_TEMPLATE_URL_LOCATION')) define('FP_PDF_TEMPLATE_URL_LOCATION', $upload_dir['baseurl'] .'/'. FP_PDF_SAVE_FOLDER .'/');
 
 /*
 * Do we need to deploy template files this edition? If yes set to true.
