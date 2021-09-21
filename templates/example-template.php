@@ -10,8 +10,8 @@ if(!class_exists('FPPDF_Core') ) {
 }
 
 /** 
- * Set up the form ID and lead ID, as well as we want page breaks displayed. 
- * Form ID and Lead ID can be set by passing it to the URL - ?fid=1&lid=10
+ * Set up the form ID and entry ID, as well as we want page breaks displayed. 
+ * Form ID and entry ID can be set by passing it to the URL - ?fid=1&lid=10
  */
  FPPDF_Common::setup_ids();
 
@@ -31,11 +31,11 @@ if(!class_exists('FPPDF_Core') ) {
 	<body>
         <?php	
 
-        foreach($lead_ids as $lead_id) {
-			$fields = FPPDF_Common::get_form_fields($form_id, $lead_id);						
+        foreach($entry_ids as $entry_id) {
+			$fields = FPPDF_Common::get_form_fields($form_id, $entry_id);						
 			
 			$form_data = FPPDF_Entry::show_entry(array(
-                'id' => $lead_id, 
+                'id' => $entry_id, 
 				'fields' => $fields, 
                 'user_info' => false,
 				'type' => 'array'		

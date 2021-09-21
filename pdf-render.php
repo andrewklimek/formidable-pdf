@@ -6,7 +6,7 @@ class FPPDFRender
 	/**
 	 * Outputs a PDF entry from a Gravity Form
 	 * var $form_id integer: The form id
-	 * var $lead_id integer: The entry id
+	 * var $entry_id integer: The entry id
 	 * var $output string: either view, save or download
 	 * save will save a copy of the PDF to the server using the FP_PDF_SAVE_LOCATION constant
 	 * var $return boolean: if set to true it will return the path of the saved PDF
@@ -14,10 +14,10 @@ class FPPDFRender
 	 * var $pdfname string: allows you to pass a custom PDF name to the generator e.g. 'Application Form.pdf' (ensure .pdf is appended to the filename)
 	 * var $fpdf boolean: custom hook to allow the FPDF engine to generate PDFs instead of DOMPDF. Premium Paid Feature.
 	 */
-	public function PDF_Generator($form_id, $lead_id, $arguments = array())
+	public function PDF_Generator($form_id, $entry_id, $arguments = array())
 	{
 		/* 
-		 * Because we merged the create and attach functions we need a measure to only run this function once per session per lead id. 
+		 * Because we merged the create and attach functions we need a measure to only run this function once per session per entry id. 
 		 */
 		static $pdf_creator = array();	
 
@@ -27,9 +27,9 @@ class FPPDFRender
 		 $html = (isset($_GET['html'])) ? (int) $_GET['html'] : 0;
 
 		/*
-		 * Join the form and lead IDs together to get the real ID
+		 * Join the form and entry IDs together to get the real ID
 		 */
-		$id = $form_id . $lead_id;
+		$id = $form_id . $entry_id;
 		
 		/* 
 		 * PDF_Generator was becoming too cluttered so store all the variables in an array 
@@ -42,7 +42,7 @@ class FPPDFRender
 		 * Check if the PDF exists and if this function has already run this season 
 		 */	
 
-		if(in_array($lead_id, $pdf_creator) && file_exists(FP_PDF_SAVE_LOCATION.$id.'/'. $filename))
+		if(in_array($entry_id, $pdf_creator) && file_exists(FP_PDF_SAVE_LOCATION.$id.'/'. $filename))
 		{
 			/* 
 			 * Don't generate a new PDF, use the existing one 
@@ -51,23 +51,23 @@ class FPPDFRender
 		}
 		
 		/*
-		 * Add lead to PDF creation tracker
+		 * Add entry to PDF creation tracker
 		 */
-		$pdf_creator[] = $lead_id;
+		$pdf_creator[] = $entry_id;
 
 		/*
 		 * Add filter before we load the template file so we can stop the main process
 		 * Used in premium plugins
 		 * return true to cancel, otherwise run.
 		 */	 
-		 $return = apply_filters('fppdfe_pre_load_template', $form_id, $lead_id, $template, $id, $output, $filename, $arguments);
+		 $return = apply_filters('fppdfe_pre_load_template', $form_id, $entry_id, $template, $id, $output, $filename, $arguments);
 
 		if($return !== true)
 		{
 			/*
 			 * Get the tempalte HTML file
 			 */
-			$entry = $this->load_entry_data($form_id, $lead_id, $template);					
+			$entry = $this->load_entry_data($form_id, $entry_id, $template);					
 
 			/*
 			 * Output HTML version and return if user requested a HTML version
@@ -91,13 +91,13 @@ class FPPDFRender
 		/*
 		 * Used in extensions to return the name of the PDF file when attaching to notifications
 		 */
-		return apply_filters('fppdfe_return_pdf_path', $form_id, $lead_id);
+		return apply_filters('fppdfe_return_pdf_path', $form_id, $entry_id);
 	}
 	
 	/**
 	 * Loads the Gravity Form output script (actually the print preview)
 	 */
-	private function load_entry_data($form_id, $lead_id, $template)
+	private function load_entry_data($form_id, $entry_id, $template)
 	{
 		/* set up contstants for Formidable Pro to use so we can override the security on the printed version */		
 		if(file_exists(FP_PDF_TEMPLATE_LOCATION.$template))

@@ -4,17 +4,17 @@ class FPPDF_Common
 {
 	public static function setup_ids()
 	{
-		global $form_id, $lead_id, $lead_ids;
+		global $form_id, $entry_id, $entry_ids;
 		
 		$form_id = $form_id ? $form_id : absint( filter_input(INPUT_GET,"fid") );
-		$lead_ids = $lead_id ? array($lead_id) : explode(',', filter_input(INPUT_GET,"lid"));
+		$entry_ids = $entry_id ? array($entry_id) : explode(',', filter_input(INPUT_GET,"lid"));
 		
 		/**
-		 * If form ID and lead ID hasn't been set stop the PDF from attempting to generate
+		 * If form ID and entry ID hasn't been set stop the PDF from attempting to generate
 		 */
-		if(empty($form_id) || empty($lead_ids))
+		if(empty($form_id) || empty($entry_ids))
 		{
-			trigger_error(__('Form Id and Lead Id are required parameters.', "formidablepropdfextended"));
+			trigger_error(__('Form Id and entry Id are required parameters.', "formidablepropdfextended"));
 			return;
 		}				
 	}
@@ -68,7 +68,7 @@ class FPPDF_Common
 	
 	public static function get_html_template($filename) 
 	{
-	  global $form_id, $lead_id, $lead_ids;
+	  global $form_id, $entry_id, $entry_ids;
 
 	  ob_start();
 	  require($filename);	
@@ -82,9 +82,9 @@ class FPPDF_Common
 	/**
 	 * Get the name of the PDF based on the Form and the submission
 	 */
-	public static function get_pdf_filename($form_id, $lead_id)
+	public static function get_pdf_filename($form_id, $entry_id)
 	{
-		return "form-$form_id-entry-$lead_id.pdf";
+		return "form-$form_id-entry-$entry_id.pdf";
 	}
 	
 	/*
@@ -92,13 +92,13 @@ class FPPDF_Common
 	 * Check the size limit, if the file name's syntax is correct 
 	 * and strip any characters that aren't classed as valid file name characters.
 	 */
-	public static function validate_pdf_name($name, $form_id = false, $lead_id = false)
+	public static function validate_pdf_name($name, $form_id = false, $entry_id = false)
 	{
 		$pdf_name = $name;							
 		
 		if($form_id > 0)
 		{
-			$pdf_name = self::do_mergetags($pdf_name, $form_id, $lead_id);	
+			$pdf_name = self::do_mergetags($pdf_name, $form_id, $entry_id);	
 		}
 		
 		/*

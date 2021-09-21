@@ -289,15 +289,15 @@
 
 	}	
 	
-	public function get_pdf_name($index, $form_id = false, $lead_id = false)
+	public function get_pdf_name($index, $form_id = false, $entry_id = false)
 	{
 		if(isset($this->configuration[$index]['filename']))
 		{
-			return FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $lead_id);		
+			return FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $entry_id);		
 		}
 		else
 		{
-			return FPPDF_Common::validate_pdf_name(FPPDF_Common::get_pdf_filename($form_id, $lead_id), $form_id, $lead_id);		
+			return FPPDF_Common::validate_pdf_name(FPPDF_Common::get_pdf_filename($form_id, $entry_id), $form_id, $entry_id);		
 		}		
 	}
 	

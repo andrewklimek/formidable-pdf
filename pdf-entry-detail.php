@@ -48,7 +48,7 @@ class FPPDF_Entry {
 
 			$array['form_title'] 				= !empty( $entry->form_name ) ? $entry->form_name : '';// this seems to be undefined sometimes when FrmEntry::getOne pulls from cache... could fetch it somehow, but how often would it really be used in templates?
 			$array['form_id']					= $entry->form_id;
-			$array['lead_id']					= $entry->id;
+			$array['entry_id']					= $entry->id;
 			
 			$date_created 						= $entry->created_at;
 			$date_created_timestamp 			= strtotime($date_created);

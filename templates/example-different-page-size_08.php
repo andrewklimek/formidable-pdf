@@ -10,8 +10,8 @@ if(!class_exists('FPPDF_Core') ) {
 }
 
 /** 
- * Set up the form ID and lead ID, as well as we want page breaks displayed. 
- * Form ID and Lead ID can be set by passing it to the URL - ?fid=1&lid=10
+ * Set up the form ID and entry ID, as well as we want page breaks displayed. 
+ * Form ID and entry ID can be set by passing it to the URL - ?fid=1&lid=10
  */
  FPPDF_Common::setup_ids();
 
@@ -34,11 +34,16 @@ $stylesheet_location = (file_exists(FP_PDF_TEMPLATE_LOCATION.'template.css')) ? 
 	<body>
         <?php	
 
-        foreach($lead_ids as $lead_id) {
-
-            $lead = RGFormsModel::get_lead($lead_id);
-            do_action("gform_print_entry_header", $form, $lead);
-            $form_data = GFPDFEntryDetail::lead_detail_grid_array($form, $lead);
+        foreach($entry_ids as $entry_id) {
+            $fields = FPPDF_Common::get_form_fields($form_id, $entry_id);						
+			
+			$form_data = FPPDF_Entry::show_entry(array(
+                'id' => $entry_id, 
+				'fields' => $fields, 
+                'user_info' => false,
+				'type' => 'array'		
+            ));
+            
 			/*
 			 * Add &data=1 when viewing the PDF via the admin area to view the $form_data array
 			 */

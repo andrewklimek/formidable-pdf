@@ -32,7 +32,7 @@
 			 * Get the form/entry ID
 			 */
 			 $form_id = $entry->form_id;
-			 $lead_id = $entry->id;
+			 $entry_id = $entry->id;
 			 
 			/*
 			 * Do a search for our specific shortcode
@@ -87,12 +87,12 @@
 							$text = 'View PDF'; 
 						 }
 						 
-						 $nonce = wp_create_nonce('fppdf_' . $form_id . $lead_id. $template);																 
+						 $nonce = wp_create_nonce('fppdf_' . $form_id . $entry_id. $template);																 
 						 
 						 /*
 						  * Build URL 
 						  */
-						  $url = '<a href="'. site_url() . '/?pdf=1&fid='.$form_id.'&lid='.$lead_id.'&template='.$template .'&nonce='. $nonce ;
+						  $url = '<a href="'. site_url() . '/?pdf=1&fid='.$form_id.'&lid='.$entry_id.'&template='.$template .'&nonce='. $nonce ;
 						  $url .= ($download !== false) ? '&download=1' : '';
 						  $url .= ($language !== false) ? '&lang=' . $language : '';
 						  $url .= '">'. $text . '</a>';

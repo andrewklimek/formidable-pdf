@@ -201,7 +201,7 @@ class FPPDF_Core extends FPPDFGenerator
 		 global $fppdf;
 
 		 $form_id = $record->form_id;
-		 $lead_id = $record->id;
+		 $entry_id = $record->id;
 
 		 $templates = $this->get_template($form_id, true);
 
@@ -223,13 +223,13 @@ class FPPDF_Core extends FPPDFGenerator
 
                         	<?php foreach($templates as $id => $val):
 
-							$name = $fppdf->get_pdf_name($id, $form_id, $lead_id);
+							$name = $fppdf->get_pdf_name($id, $form_id, $entry_id);
 							$aid = (int) $id + 1;
 							?>
                             <div class="detailed_pdf">
 								<span><?php
 									echo $name;
-									$url = home_url() .'/?pdf=1&aid='. $aid .'&fid=' . $form_id . '&lid=' . $lead_id . '&template=' . $val['template'];
+									$url = home_url() .'/?pdf=1&aid='. $aid .'&fid=' . $form_id . '&lid=' . $entry_id . '&template=' . $val['template'];
 								?></span>
                                 <a href="<?php echo $url; ?>" target="_blank" class="button">View</a>
 				 				<a href="<?php echo $url.'&download=1'; ?>" target="_blank" class="button">Download</a></div>
@@ -241,7 +241,7 @@ class FPPDF_Core extends FPPDFGenerator
 		}
 		elseif($templates !== false)
 		{
-			$url = home_url() .'/?pdf=1&fid=' . $form_id . '&lid=' . $lead_id . '&template=' . $templates;
+			$url = home_url() .'/?pdf=1&fid=' . $form_id . '&lid=' . $entry_id . '&template=' . $templates;
 
 			?>
 			PDF: <a href="<?php echo $url; ?>" target="_blank" class="button">View</a>
@@ -261,7 +261,7 @@ class FPPDF_Core extends FPPDFGenerator
 		 * File: pdf-configuration-indexer.php
 		 */
 		 $form_id = $entry->form_id;
-		 $lead_id = $entry->id;
+		 $entry_id = $entry->id;
 
 		 global $fppdf;
 
@@ -283,11 +283,11 @@ class FPPDF_Core extends FPPDFGenerator
                     <div class="fp_submenu">
                         <ul>
                         	<?php foreach($templates as $id => $t):
-							 $name = $fppdf->get_pdf_name($id, $form_id, $lead_id);
+							 $name = $fppdf->get_pdf_name($id, $form_id, $entry_id);
 							 $aid = (int) $id + 1;
 							?>
                             <li class="">
-                            	<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&aid=<?php echo $aid; ?>&fid=<?php echo $form_id; ?>&lid=<?php echo $lead_id; ?>&template=<?php echo $t['template']; ?>"><?php echo $name; ?></a>
+                            	<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&aid=<?php echo $aid; ?>&fid=<?php echo $form_id; ?>&lid=<?php echo $entry_id; ?>&template=<?php echo $t['template']; ?>"><?php echo $name; ?></a>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -304,7 +304,7 @@ class FPPDF_Core extends FPPDFGenerator
 
 			ob_start();
 			?>
-			<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&fid=<?php echo $form_id; ?>&lid=<?php echo $lead_id; ?>&template=<?php echo $templates; ?>"> View PDF</a>
+			<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&fid=<?php echo $form_id; ?>&lid=<?php echo $entry_id; ?>&template=<?php echo $templates; ?>"> View PDF</a>
 			<?php
 			$actions['pdf'] = ob_get_contents();
 			ob_end_clean();
@@ -329,7 +329,7 @@ class FPPDF_Core extends FPPDFGenerator
 	  }
 
 		$form_id = (int) $_GET['fid'];
-		$lead_id = (int) $_GET['lid'];
+		$entry_id = (int) $_GET['lid'];
 
 		/*
 		 * Get the template name
@@ -364,7 +364,7 @@ class FPPDF_Core extends FPPDFGenerator
 
 			 $nonce = $_GET['nonce'];
 
-			 if ( ! wp_verify_nonce( $nonce,  'fppdf_' . $form_id . $lead_id. $user_template ) ) {
+			 if ( ! wp_verify_nonce( $nonce,  'fppdf_' . $form_id . $entry_id. $user_template ) ) {
 				 /*
 				  * Failed
 				  */
@@ -382,7 +382,7 @@ class FPPDF_Core extends FPPDFGenerator
 				   * User doesn't have the correct access privilages
 				   * Let's check if they are assigned to the form
 				   */
-					$user_logged_entries = $wpdb->get_var("SELECT count(*) FROM `{$wpdb->prefix}frm_items` WHERE form_id={$form_id} AND id={$lead_id} AND user_id=". get_current_user_id() );
+					$user_logged_entries = $wpdb->get_var("SELECT count(*) FROM `{$wpdb->prefix}frm_items` WHERE form_id={$form_id} AND id={$entry_id} AND user_id=". get_current_user_id() );
 
 					/*
 					 * Failed again.
@@ -418,7 +418,7 @@ class FPPDF_Core extends FPPDFGenerator
 
 
 
-		$pdf_arguments = $this->generate_pdf_parameters($index, $form_id, $lead_id, $template);
+		$pdf_arguments = $this->generate_pdf_parameters($index, $form_id, $entry_id, $template);
 
 		/*
 		 * Add output to arguments
@@ -431,7 +431,7 @@ class FPPDF_Core extends FPPDFGenerator
 
 		$pdf_arguments['output'] = $output;
 
-		$this->render->PDF_Generator($form_id, $lead_id, $pdf_arguments);
+		$this->render->PDF_Generator($form_id, $entry_id, $pdf_arguments);
 
 	  exit();
 	}
@@ -449,7 +449,7 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Allow the template/function access to these variables
 		 */
-		global $fppdf, $form_id, $lead_id;
+		global $fppdf, $form_id, $entry_id;
 
 		$notification_name = (isset($args['email_key'])) ? $args['email_key'] : '';
 
@@ -459,8 +459,8 @@ class FPPDF_Core extends FPPDFGenerator
 		 */
 
 		$form_id           = $form->id;
-		$lead_id           = $args['entry']->id;
-		$folder_id 		   = $form_id.$lead_id.'/';
+		$entry_id           = $args['entry']->id;
+		$folder_id 		   = $form_id.$entry_id.'/';
 
 		/*
 		 * Before setting up PDF options we will check if a configuration is found
@@ -498,10 +498,10 @@ class FPPDF_Core extends FPPDFGenerator
 
 				if ($fppdf->check_notification($notification_name, $notifications) || $notification_override === true)
 				{
-					$pdf_arguments = $fppdf->generate_pdf_parameters($index, $form_id, $lead_id, $template);
+					$pdf_arguments = $fppdf->generate_pdf_parameters($index, $form_id, $entry_id, $template);
 
 					/* generate and save default PDF */
-					$filename = $fppdf->render->PDF_Generator($form_id, $lead_id, $pdf_arguments);
+					$filename = $fppdf->render->PDF_Generator($form_id, $entry_id, $pdf_arguments);
 
 					$attachments[] = $filename;
 				}
@@ -574,10 +574,10 @@ class FPPDF_Core extends FPPDFGenerator
 	 * Generate PDF parameters to pass to the PDF renderer
 	 * $index Integer The configuration index number
 	 */
-	private function generate_pdf_parameters($index, $form_id, $lead_id, $template = '')
+	private function generate_pdf_parameters($index, $form_id, $entry_id, $template = '')
 	{
 
-		$pdf_name        = !empty($this->configuration[$index]['filename']) ? FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $lead_id) : FPPDF_Common::get_pdf_filename($form_id, $lead_id);
+		$pdf_name        = !empty($this->configuration[$index]['filename']) ? FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $entry_id) : FPPDF_Common::get_pdf_filename($form_id, $entry_id);
 		$template        = !empty($template) ? $template : $this->get_template($index);
 		
 		$pdf_size        = (isset($this->configuration[$index]['pdf_size']) && (is_array($this->configuration[$index]['pdf_size']) || strlen($this->configuration[$index]['pdf_size']) > 0)) ? $this->configuration[$index]['pdf_size'] : self::$default['pdf_size'];
@@ -592,8 +592,8 @@ class FPPDF_Core extends FPPDFGenerator
 		*/
 		$privileges      = (isset($this->configuration[$index]['pdf_privileges'])) ? $this->validate_privileges($this->configuration[$index]['pdf_privileges']) : $this->validate_privileges('');
 		
-		$pdf_password    = (isset($this->configuration[$index]['pdf_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_password'], $form_id, $lead_id) : '';
-		$master_password = (isset($this->configuration[$index]['pdf_master_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_master_password'], $form_id, $lead_id) : '';
+		$pdf_password    = (isset($this->configuration[$index]['pdf_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_password'], $form_id, $entry_id) : '';
+		$master_password = (isset($this->configuration[$index]['pdf_master_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_master_password'], $form_id, $entry_id) : '';
 		$rtl             = (isset($this->configuration[$index]['rtl'])) ? $this->configuration[$index]['rtl'] : false;
 		
 		/* added in v3.4.0 */
@@ -606,14 +606,14 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Run the options through filters
 		 */
-		$pdf_name        = apply_filters('fppdf_pdf_name', $pdf_name, $form_id, $lead_id);
-		$template        = apply_filters('fppdf_template', $template, $form_id, $lead_id);
-		$orientation     = apply_filters('fppdf_orientation', $orientation, $form_id, $lead_id);
-		$security        = apply_filters('fppdf_security', $security, $form_id, $lead_id);
-		$privileges      = apply_filters('fppdf_privilages', $privileges, $form_id, $lead_id);
-		$pdf_password    = apply_filters('fppdf_password', $pdf_password, $form_id, $lead_id);
-		$master_password = apply_filters('fppdf_master_password', $master_password, $form_id, $lead_id);
-		$rtl             = apply_filters('fppdf_rtl', $rtl, $form_id, $lead_id);
+		$pdf_name        = apply_filters('fppdf_pdf_name', $pdf_name, $form_id, $entry_id);
+		$template        = apply_filters('fppdf_template', $template, $form_id, $entry_id);
+		$orientation     = apply_filters('fppdf_orientation', $orientation, $form_id, $entry_id);
+		$security        = apply_filters('fppdf_security', $security, $form_id, $entry_id);
+		$privileges      = apply_filters('fppdf_privilages', $privileges, $form_id, $entry_id);
+		$pdf_password    = apply_filters('fppdf_password', $pdf_password, $form_id, $entry_id);
+		$master_password = apply_filters('fppdf_master_password', $master_password, $form_id, $entry_id);
+		$rtl             = apply_filters('fppdf_rtl', $rtl, $form_id, $entry_id);
 
 		$pdf_arguments = array(
 			'pdfname'             => $pdf_name,
