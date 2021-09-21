@@ -62,7 +62,6 @@ add_action( 'admin_init', 'FPPDF_Core::admin_init' );
  * Add settings page AJAX listeners
  */
 add_action( 'wp_ajax_fppdfe_initialise', 'FPPDF_Settings::ajax_deploy' );
-add_action( 'wp_ajax_fppdfe_initialise_font', 'FPPDF_Settings::initialise_fonts' );
 
 
 class FPPDF_Core extends FPPDFGenerator
@@ -97,10 +96,6 @@ class FPPDF_Core extends FPPDFGenerator
 	    global $fppdf;
 		$fppdf = new FPPDF_Core();
 
-		/*
-		 * Some functions require the Wordpress Admin area to be fully loaded before we do any processing
-		 */
-		add_action( 'wp_loaded', 'FPPDF_Core::fully_loaded_admin' );
    }
 
    /*
@@ -128,7 +123,6 @@ class FPPDF_Core extends FPPDFGenerator
 		 * Add our installation/file handling hooks
 		 */
 		add_action( 'admin_init', 'FPPDF_Core::gfe_admin_init', 9 );
-		add_action( 'after_switch_theme', 'FPPDF_InstallUpdater::fp_pdf_on_switch_theme', 10, 2 );
 		register_activation_hook( __FILE__, 'FPPDF_InstallUpdater::install' );
 
 
@@ -159,21 +153,6 @@ class FPPDF_Core extends FPPDFGenerator
 		add_filter( 'frm_notification_attachment', 'FPPDF_Core::create_and_attach_pdf', 10, 3 );
 
 	}
-
-	/*
-	 * Do processes that require Wordpress Admin to be fully loaded
-	 */
-	 public static function fully_loaded_admin()
-	 {
-		 /*
-		  * Check if the user has switched themes and they haven't yet prompt user to copy over directory structure
-		  * If the plugin has just initialised we won't check for a theme swap as initialisation will reset this value
-		  */
-		  if(!filter_input(INPUT_POST,'upgrade'))
-		  {
-		  	FPPDF_InstallUpdater::check_theme_switch();
-		  }
-	 }
 
 	/**
 	 * Check to see if Formidable Pro is actually installed
@@ -206,15 +185,6 @@ class FPPDF_Core extends FPPDFGenerator
 			 * Prompt user to initialise plugin
 			 */
 			 add_action( 'admin_notices',  'FPPDF_InstallUpdater::FP_PDF_not_deployed_fresh' );
-		} else {
-
-			/**
-			 * Check if deployed new template files after update
-			 */
-			 if( (get_option('FP_PDF_extended_deploy') == 'no' && !filter_input(INPUT_POST,'upgrade') && FP_PDF_DEPLOY === true) || (file_exists(FP_PDF_PLUGIN_DIR .'mPDF.zip') && !filter_input(INPUT_POST,'upgrade') ) ) {
-				/*show warning message */
-				add_action('admin_notices', array("FPPDF_InstallUpdater", "FP_PDF_not_deployed"));
-			 }
 		}
 
     	 FPPDF_Settings::settings_page();
@@ -360,7 +330,6 @@ class FPPDF_Core extends FPPDFGenerator
 
 		$form_id = (int) $_GET['fid'];
 		$lead_id = (int) $_GET['lid'];
-		$ip = FPPDF_Common::getRealIpAddr();
 
 		/*
 		 * Get the template name
@@ -380,17 +349,10 @@ class FPPDF_Core extends FPPDFGenerator
 		 */
 		 if(!is_user_logged_in() && empty($_GET['nonce']))
 		 {
-			/*
-			 * Check the lead is in the database and the IP address matches (little security booster)
-			 */
-
-			 $form_entries = $wpdb->get_var("SELECT count(*) FROM `{$wpdb->prefix}frm_items` WHERE form_id={$form_id} AND id={$lead_id} AND ip='{$ip}'");
-
-			 if($form_entries == 0 && $this->configuration[$index]['access'] !== 'all')
+			 if( $this->configuration[$index]['access'] !== 'all')
 			 {
 				auth_redirect();
 			 }
-
 		 }
 		 elseif(isset($_GET['nonce']))
 		 {
@@ -424,14 +386,14 @@ class FPPDF_Core extends FPPDFGenerator
 
 					/*
 					 * Failed again.
-					 * One last check against the IP
+					 * One last check against the IP<---removed this part
 					 * If it matches the record then we will show the PDF
+					 * 
+					 * TODO Might want to rewrite this whole block to check access === all first?
 					 */
 					if($user_logged_entries == 0)
 					{
-
-						$form_entries = $wpdb->get_var("SELECT count(*) FROM `{$wpdb->prefix}frm_items` WHERE form_id={$form_id} AND id={$lead_id} AND ip='{$ip}'");
-						if($form_entries == 0 && $this->configuration[$index]['access'] !== 'all')
+						if( $this->configuration[$index]['access'] !== 'all')
 						{
 							/*
 							 * Don't show the PDF

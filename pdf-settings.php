@@ -195,32 +195,4 @@ class FPPDF_Settings {
 			
 			return $msg;
 	}
-	
-	public static function initialise_fonts() {
-		
-			/* check nonce and permission */
-			if ( ! wp_verify_nonce( $_POST['nonce'], 'fppdfe_nonce' ) || !current_user_can('frm_edit_forms') )
-			{
-				print json_encode(array('error' => 'Access denied. Failed to initialise fonts.'));
-			}				
-		
-			/*
-			 * We only want to reinitialise the font files and configuration
-			 */	
-			 FPPDF_InstallUpdater::initialise_fonts();
-			
-			/* 
-			 * Output the message back to the user
-			 */
-			ob_start();
-		 
-			do_action('fppdfe_notices');		 
-			$message = ob_get_contents();
-		 
-			ob_end_clean();
-			
-			print json_encode(array('message' => $message));				 		
-			
-			exit;
-	}
 }

@@ -62,31 +62,9 @@ class FPPDF_Common
 		 {
 			return false; 
 		 }
-		 
-		 if(file_exists(FP_PDF_PLUGIN_DIR .'mPDF.zip'))
-		 {
-			return false; 
-		 }
 
 		 return true;
-	 }	
-	
-	public static function getRealIpAddr()
-	{
-		if (!empty($_SERVER['HTTP_CLIENT_IP']))   //check ip from share internet
-		{
-		  $ip = $_SERVER['HTTP_CLIENT_IP'];
-		}
-		else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))   //to check ip is pass from proxy
-		{
-		  $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		}
-		else
-		{
-		  $ip = $_SERVER['REMOTE_ADDR'];
-		}
-		return $ip;
-	}
+	 }
 	
 	public static function get_html_template($filename) 
 	{
