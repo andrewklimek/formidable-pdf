@@ -49,7 +49,10 @@ class FPPDF_Common
 				// $data['field'][ $f->field_key ] = ['value' => $data[ $f->id ] ];// for backwards compat... or regex your templates: \$form_data\['field'\](\['[\w\d]+?'\])\['value'\] >>> $form_data$1
 			}
 		}
-		// print "<pre>";var_dump($entry);print "</pre>";
+
+		// functionality from view_data() which seemed fun
+		if ( !empty( $_GET['data'] ) ) { echo '<pre>'; print_r($data); echo '</pre>'; }
+
 		return $data;
 	}
 	
@@ -86,16 +89,6 @@ class FPPDF_Common
 		{		
 			return false;
 		}
-		
-		if(get_option('fp_pdf_extended_version') != FP_PDF_EXTENDED_VERSION)
-		{
-			return false;
-		}
-		
-		 if(get_option('fp_pdf_extended_deploy') == 'no' && !filter_input(INPUT_POST,'upgrade') && FP_PDF_DEPLOY === true)		
-		 {
-			return false; 
-		 }
 
 		 return true;
 	 }
@@ -172,68 +165,48 @@ class FPPDF_Common
         return FrmProContent::replace_shortcodes($string, $entry, $shortcodes);				
 	}
 	
-	public static function view_data($form_data)
-	{
-		if(isset($_GET['data']) && $_GET['data'] === '1')
-		{
-			print '<pre>'; 
-			print_r($form_data);
-			print '</pre>';
-			exit;
-		}
-	}
-	
-    public static function is_formidable_supported( $version ) {
-		if ( ! class_exists('FrmProDisplay') ) {
-			return false;
-		}
+    // public static function is_formidable_supported( $version ) {
+	// 	if ( ! class_exists('FrmProDisplay') ) {
+	// 		return false;
+	// 	}
 
-		global $frm_version;
-		if ( $frm_version ) {
-			/**
-			 * Get the plugin version when < 2.0
-			 */
-			$current_frm_version = $frm_version;
-		} else if ( is_callable( 'FrmAppHelper::plugin_version' ) ) {
-			/**
-			 * Get the plugin version when > 2.0
-			 */
-			$current_frm_version = FrmAppHelper::plugin_version();
-		}
+	// 	global $frm_version;
+	// 	if ( $frm_version ) {
+	// 		/**
+	// 		 * Get the plugin version when < 2.0
+	// 		 */
+	// 		$current_frm_version = $frm_version;
+	// 	} else if ( is_callable( 'FrmAppHelper::plugin_version' ) ) {
+	// 		/**
+	// 		 * Get the plugin version when > 2.0
+	// 		 */
+	// 		$current_frm_version = FrmAppHelper::plugin_version();
+	// 	}
 
-		if ( version_compare( $current_frm_version, $version, '>=' ) === true ) {
-			global $frmpro_is_installed;
-			if ( $frmpro_is_installed ) {
-				return true;
-			}
+	// 	if ( version_compare( $current_frm_version, $version, '>=' ) === true ) {
+	// 		global $frmpro_is_installed;
+	// 		if ( $frmpro_is_installed ) {
+	// 			return true;
+	// 		}
 
-			/**
-			 * Check if pro is installed in 2.0+
-			 */
-			return ( is_callable( 'FrmAppHelper::pro_is_installed' ) && FrmAppHelper::pro_is_installed() );
-		}
+	// 		/**
+	// 		 * Check if pro is installed in 2.0+
+	// 		 */
+	// 		return ( is_callable( 'FrmAppHelper::pro_is_installed' ) && FrmAppHelper::pro_is_installed() );
+	// 	}
 
-		return false;
-    }	
-	
-    public static function is_wordpress_supported($version){
-		global $wp_version;
-		if(version_compare($wp_version, $version, ">=") === true)
-		{
-			return true;
-		}
-		return false;
-    }	
+	// 	return false;
+    // }	
 	
 	public static function display_compatibility_error()
 	{
-		 $message = "Formidable Pro " . FP_PDF_EXTENDED_SUPPORTED_VERSION . " is required to use this plugin. Activate/Upgrade now or purchase it today!"; 
+		 $message = "Formidable Pro is required to use this plugin. Activate/Upgrade now or purchase it today!"; 
 		 FPPDF_Common::display_plugin_message($message, true);			
 	}
 	
 	public static function display_wp_compatibility_error()
 	{
-		 $message = "Wordpress " . FP_PDF_EXTENDED_WP_SUPPORTED_VERSION . " or higher is required to use this plugin."; 
+		 $message = "Wordpress 3.6 or higher is required to use this plugin."; 
 		 FPPDF_Common::display_plugin_message($message, true);			
 	}
 	

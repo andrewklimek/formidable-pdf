@@ -23,9 +23,9 @@ GNU General Public License for more details.
 /*
 * Define our constants
 */
-if(!defined('FP_PDF_EXTENDED_VERSION')) define('FP_PDF_EXTENDED_VERSION', '1.7.0');
-if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '2.0' );
-if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6');
+// if(!defined('FP_PDF_EXTENDED_VERSION')) define('FP_PDF_EXTENDED_VERSION', '1.7.0');
+// if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '2.0' );
+// if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6');
 
 if(!defined('FP_PDF_PLUGIN_DIR')) define('FP_PDF_PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 if(!defined('FP_PDF_PLUGIN_URL')) define('FP_PDF_PLUGIN_URL', plugin_dir_url( __FILE__ ));
@@ -67,7 +67,7 @@ include FP_PDF_PLUGIN_DIR . 'pdf-custom-display.php';
 * Initiate the class after Formidable Pro has been loaded using the init hook.
 */
 add_action( 'init', 'FPPDF_Core::pdf_init' );
-add_action( 'admin_init', 'FPPDF_Core::admin_init' );
+// add_action( 'admin_init', 'FPPDF_Core::admin_init' );
 
 /*
  * Add settings page AJAX listeners
@@ -89,13 +89,13 @@ class FPPDF_Core extends FPPDFGenerator
 		  * Check if Formidable Pro is installed before we continue
 		  * Include common functions for test
 		  */
-		  if ( FPPDF_Common::is_formidable_supported( FP_PDF_EXTENDED_SUPPORTED_VERSION ) === false ) {
-			 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_compatibility_error' );
-			 return;
-		  } else if ( FPPDF_Common::is_wordpress_supported( FP_PDF_EXTENDED_WP_SUPPORTED_VERSION ) === false ) {
-			 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_wp_compatibility_error' );
-			 return;
-		  }
+		//   if ( FPPDF_Common::is_formidable_supported( FP_PDF_EXTENDED_SUPPORTED_VERSION ) === false ) {
+		// 	 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_compatibility_error' );
+		// 	 return;
+		//   } else if ( FPPDF_Common::is_wordpress_supported( FP_PDF_EXTENDED_WP_SUPPORTED_VERSION ) === false ) {
+		// 	 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_wp_compatibility_error' );
+		// 	 return;
+		//   }
       //else {
 			// add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Core::add_documentation_byline' );
 		  //}
@@ -112,15 +112,15 @@ class FPPDF_Core extends FPPDFGenerator
    /*
     * Only run in the admin area
 	*/
-   public static function admin_init()
-   {
-	   wp_enqueue_script('fppdfe_admin', FP_PDF_PLUGIN_URL . 'js/admin.js', array('jquery'), '1', true);
-	   wp_localize_script( 'fppdfe_admin', 'FPPDFE', array(
-	   		'nonce' => wp_create_nonce( 'fppdfe_nonce' )
-	   ) );
+//    public static function admin_init()
+//    {
+// 	   wp_enqueue_script('fppdfe_admin', FP_PDF_PLUGIN_URL . 'js/admin.js', array('jquery'), '1', true);
+// 	   wp_localize_script( 'fppdfe_admin', 'FPPDFE', array(
+// 	   		'nonce' => wp_create_nonce( 'fppdfe_nonce' )
+// 	   ) );
 
-	   wp_enqueue_style('fppdfe_admin', FP_PDF_PLUGIN_URL . 'css/admin.css');
-   }
+// 	   wp_enqueue_style('fppdfe_admin', FP_PDF_PLUGIN_URL . 'css/admin.css');
+//    }
 
 	public function __construct()
 	{
@@ -133,7 +133,7 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Add our installation/file handling hooks
 		 */
-		add_action( 'admin_init', 'FPPDF_Core::gfe_admin_init', 9 );
+		add_action( 'admin_init', 'FPPDF_Settings::settings_page', 9 );
 		register_activation_hook( __FILE__, 'FPPDF_InstallUpdater::install' );
 
 
@@ -165,43 +165,6 @@ class FPPDF_Core extends FPPDFGenerator
 
 	}
 
-	/**
-	 * Check to see if Formidable Pro is actually installed
-	 */
-	public static function gfe_admin_init() {
-
-		/*
-		 * Check if database plugin version matches current plugin version and updates if needed
-		 */
-		if(get_option('fp_pdf_extended_version') != FP_PDF_EXTENDED_VERSION)
-		{
-			update_option('fp_pdf_extended_version', FP_PDF_EXTENDED_VERSION);
-			
-			if( FP_PDF_EXTENDED_VERSION < 1.7 )
-			{
-			    update_option('fp_pdf_extended_deploy', 'no');
-    			/* redirect */
-    			Header('Location: '.FP_PDF_SETTINGS_URL);
-    			exit;
-			}
-		}
-
-		/*
-		 * Check if GF PDF Extended is correctly installed. If not we'll run the installer.
-		 */
-		$theme_switch = get_option('gfpdfe_switch_theme');
-
-		if( ( ( get_option('fp_pdf_extended_installed') != 'installed' ) || ( ! is_dir(FP_PDF_TEMPLATE_LOCATION)) ) && ( ! filter_input(INPUT_POST,'upgrade') && ( empty( $theme_switch['old'] ) ) ) ) {
-			/*
-			 * Prompt user to initialise plugin
-			 */
-			 add_action( 'admin_notices',  'FPPDF_InstallUpdater::FP_PDF_not_deployed_fresh' );
-		}
-
-    	 FPPDF_Settings::settings_page();
-
-	}
-
 
 	function detail_pdf_link($record) {
 		/*
@@ -227,28 +190,20 @@ class FPPDF_Core extends FPPDFGenerator
         	<h3 class="hndle"><span>PDFs</span></h3>
         	<div class="inside">
         <?php
-		if(is_array($templates))
-		{
-			?>
+		if(is_array($templates)) {
+			foreach($templates as $id => $val):
 
-
-                        	<?php foreach($templates as $id => $val):
-
-							$name = $fppdf->get_pdf_name($id, $form_id, $entry_id);
-							$aid = (int) $id + 1;
-							?>
-                            <div class="detailed_pdf">
-								<span><?php
-									echo $name;
-									$url = home_url() .'/?pdf=1&aid='. $aid .'&fid=' . $form_id . '&lid=' . $entry_id . '&template=' . $val['template'];
-								?></span>
-                                <a href="<?php echo $url; ?>" target="_blank" class="button">View</a>
-				 				<a href="<?php echo $url.'&download=1'; ?>" target="_blank" class="button">Download</a></div>
-
-                            <?php endforeach; ?>
-
-
-            <?php
+				$name = $fppdf->get_pdf_name($id, $form_id, $entry_id);
+				$aid = (int) $id + 1;
+				$url = home_url() .'/?pdf=1&aid='. $aid .'&fid=' . $form_id . '&lid=' . $entry_id . '&template=' . $val['template'];
+				?>
+				<div class="detailed_pdf">
+					<span><?php echo $name; ?></span>
+					<a href="<?php echo $url; ?>" target="_blank" class="button">View</a>
+					<a href="<?php echo $url . '&download=1'; ?>" target="_blank" class="button">Download</a>
+				</div>
+				<?php
+			endforeach;
 		}
 		elseif($templates !== false)
 		{

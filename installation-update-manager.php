@@ -21,9 +21,7 @@ class FPPDF_InstallUpdater
 	
 	public static function install() {
 		if(strlen(get_option('fp_pdf_extended_installed')) == 0)
-		{
-			update_option('fp_pdf_extended_version', FP_PDF_EXTENDED_VERSION);	
-			
+		{			
 			self::pdf_extended_activate();
 		}
 	}
@@ -206,29 +204,7 @@ class FPPDF_InstallUpdater
 				echo '</p></div>';
 			}
 		}
-	}	
-	
-	/**
-	 * PDF Extended has been freshly installed
-	 */
-	public static function fp_pdf_not_deployed_fresh() {
-		if( (FP_PDF_DEPLOY === true) && !filter_input(INPUT_POST,'update') )
-		{
-			if(filter_input(INPUT_GET,"page") == 'fp_settings' && filter_input(INPUT_GET,'addon') == 'PDF')
-			{
-				echo '<div class="fppdfe_message updated"><p>';
-				echo 'Welcome to Formidable Pro PDF Extended. Before you can use the plugin correctly you need to initilise it.';
-				echo '</p></div>';
-				
-			}
-			else
-			{
-				echo '<div class="fppdfe_message updated"><p>';
-				echo 'Welcome to Formidable Pro PDF Extended. Before you can use the plugin correctly you need to initilise it. Please go to the <a href="'.FP_PDF_SETTINGS_URL.'">plugin\'s settings page</a> to initialise.';
-				echo '</p></div>';
-			}
-		}
-	}	
+	}
 	
 	/**
 	 * The Formidable Pro version isn't compatible. Prompt user to upgrade
@@ -236,7 +212,7 @@ class FPPDF_InstallUpdater
 	public function fp_pdf_not_supported()
 	{
 			echo '<div class="fppdfe_message error"><p>';
-			echo 'Formidable Pro PDF Extended only works with Formidable Pro version '.FP_PDF_EXTENDED_SUPPORTED_VERSION.' and higher. Please upgrade your copy of Formidable Pro to use this plugin.';
+			echo 'Formidable Pro PDF Extended only works with Formidable Pro version 2.0 and higher. Please upgrade your copy of Formidable Pro to use this plugin.';
 			echo '</p></div>';	
 	}
 								
