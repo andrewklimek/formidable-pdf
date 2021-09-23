@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '6e429b86388e7afe01a7518fa9ac21d9ad20e93a',
+        'reference' => '2a035ccd6013e9837542d04db9990f09654c9bee',
         'name' => '__root__',
         'dev' => true,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '6e429b86388e7afe01a7518fa9ac21d9ad20e93a',
+            'reference' => '2a035ccd6013e9837542d04db9990f09654c9bee',
             'dev_requirement' => false,
         ),
         'mpdf/mpdf' => array(
