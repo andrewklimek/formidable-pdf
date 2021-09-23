@@ -38,18 +38,18 @@ if(!class_exists('FPPDF_Core') ) {
         <?php
 		
         foreach($entry_ids as $entry_id) {
-			$fields = FPPDF_Common::get_form_fields($form_id, $entry_id);								
-			
-			echo FPPDF_Entry::show_entry(array(
-                'id' => $entry_id, 
-				'fields' => $fields, 
-                'user_info' => false,
-				'include_blank' => $show_empty_fields,
-				'show_html' => $show_html_fields			
-            ));						
-			
-        }
 
+            echo FrmProEntriesController::show_entry_shortcode([
+                'id'            => $entry_id, 
+                'text_color'    => "000000",
+             // 'border_color'   =>"000000",
+             // 'alt_bg_color'   => "f4f4f4",
+             // 'show_image'     => 1,
+             // 'include_blank'  => 1, 
+             // 'include_extras' => "page, section, html",
+             // 'plain_text'     => 1,
+            ]);	
+        }
         ?>
 	</body>
 </html>

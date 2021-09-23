@@ -18,23 +18,57 @@ class FPPDF_Common
 			return;
 		}				
 	}
+
+	/**
+	 * New simpler method
+	 */
+	public static function entry_data( $entry_id )
+	{
+		$data = [];
+		// $data['field'] = [];// for backwards compat... or regex your templates: \$form_data\['field'\](\['[\w\d]+?'\])\['value'\] >>> $form_data$1
+
+		$entry = FrmEntry::getOne($entry_id, true);
+
+		$data['form_title']			= !empty( $entry->form_name ) ? $entry->form_name : '';// this seems to be undefined sometimes when FrmEntry::getOne pulls from cache... could fetch it somehow, but how often would it really be used in templates?
+		$data['form_id']			= $entry->form_id;
+		$data['entry_id']			= $entry->id;
+		$data['updated_at']			= $entry->updated_at;
+		$data['created_at']			= $entry->created_at;
+		$data['timestamp']			= strtotime( $entry->created_at );
+		$data['date_created']		= date('d/m/Y', $data['timestamp']);
+		$data['date_created_usa']	= date('m/d/Y', $data['timestamp']);// this is weird, shouldn't they format it as desired in the templates?
+
+		$fields = FrmField::getAll(['fi.form_id' => $entry->form_id], 'field_order');
+
+		foreach ( $fields as $k => $f )
+		{
+			if ( strpos( $f->field_options['classes'], 'pdf_hidden') === false )
+			{
+				$data[ $f->id ] = isset( $entry->metas[ $f->id ] ) ? $entry->metas[ $f->id ] : '';
+				$data[ $f->field_key ] = $data[ $f->id ];// make keys available too... for now?
+				// $data['field'][ $f->field_key ] = ['value' => $data[ $f->id ] ];// for backwards compat... or regex your templates: \$form_data\['field'\](\['[\w\d]+?'\])\['value'\] >>> $form_data$1
+			}
+		}
+		// print "<pre>";var_dump($entry);print "</pre>";
+		return $data;
+	}
 	
 	/*
 	 * Remove any form fields with pdf_hidden in the class name
 	 */
-	public static function get_form_fields($form_id)
-	{		
-        $fields = FrmField::getAll(array('fi.form_id' => $form_id), 'field_order');
+	// public static function get_form_fields($form_id)
+	// {		
+    //     $fields = FrmField::getAll(array('fi.form_id' => $form_id), 'field_order');
 
-        foreach($fields as $k => $f){
-			if(strpos($f->field_options['classes'], 'pdf_hidden') !== false)
-			{
-				unset($fields[$k]);	
-			}
-        }
+    //     foreach($fields as $k => $f){
+	// 		if(strpos($f->field_options['classes'], 'pdf_hidden') !== false)
+	// 		{
+	// 			unset($fields[$k]);	
+	// 		}
+    //     }
         
-        return $fields;
-	}
+    //     return $fields;
+	// }
 	
 	 /*
 	  * Check if the system is fully installed and return the correct values

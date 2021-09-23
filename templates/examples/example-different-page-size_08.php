@@ -35,19 +35,22 @@ $stylesheet_location = (file_exists(FP_PDF_TEMPLATE_LOCATION.'template.css')) ? 
         <?php	
 
         foreach($entry_ids as $entry_id) {
-            $fields = FPPDF_Common::get_form_fields($form_id, $entry_id);						
+
+			$form_data = FPPDF_Common::entry_data($entry_id);
+
+			// $fields = FPPDF_Common::get_form_fields($form_id, $entry_id);						
 			
-			$form_data = FPPDF_Entry::show_entry(array(
-                'id' => $entry_id, 
-				'fields' => $fields, 
-                'user_info' => false,
-				'type' => 'array'		
-            ));
+			// $form_data = FPPDF_Entry::show_entry(array(
+            //     'id' => $entry_id, 
+			// 	'fields' => $fields, 
+            //     'user_info' => false,
+			// 	'type' => 'array'		
+            // ));
             
-			/*
-			 * Add &data=1 when viewing the PDF via the admin area to view the $form_data array
-			 */
-			PDF_Common::view_data($form_data);				
+			// /*
+			//  * Add &data=1 when viewing the PDF via the admin area to view the $form_data array
+			//  */
+			// PDF_Common::view_data($form_data);				
 						
 			/* get all the form values */
 			/*$date_created		= $form_data['date_created'];

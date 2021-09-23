@@ -60,7 +60,7 @@ include FP_PDF_PLUGIN_DIR . 'pdf-configuration-indexer.php';
 include FP_PDF_PLUGIN_DIR . 'installation-update-manager.php';
 include FP_PDF_PLUGIN_DIR . 'pdf-render.php';
 include FP_PDF_PLUGIN_DIR . 'pdf-settings.php';
-include FP_PDF_PLUGIN_DIR . 'pdf-entry-detail.php';
+// include FP_PDF_PLUGIN_DIR . 'pdf-entry-detail.php';
 include FP_PDF_PLUGIN_DIR . 'pdf-custom-display.php';
 
 /*
