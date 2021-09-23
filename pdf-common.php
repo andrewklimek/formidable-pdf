@@ -37,20 +37,68 @@ class FPPDF_Common
 		$data['timestamp']			= strtotime( $entry->created_at );
 		$data['date_created']		= date('d/m/Y', $data['timestamp']);
 		$data['date_created_usa']	= date('m/d/Y', $data['timestamp']);// this is weird, shouldn't they format it as desired in the templates?
+		$data['label']				= [];// will hold the displayed label values for any fields that have separate saved values
 
 		$fields = FrmField::getAll(['fi.form_id' => $entry->form_id], 'field_order');
 
 		foreach ( $fields as $k => $f )
 		{
-			if ( strpos( $f->field_options['classes'], 'pdf_hidden') === false )
-			{
+			if ( strpos( $f->field_options['classes'], 'pdf_hidden') === false ) {
 				$data[ $f->id ] = isset( $entry->metas[ $f->id ] ) ? $entry->metas[ $f->id ] : '';
-				$data[ $f->field_key ] = $data[ $f->id ];// make keys available too... for now?
-				// $data['field'][ $f->field_key ] = ['value' => $data[ $f->id ] ];// for backwards compat... or regex your templates: \$form_data\['field'\](\['[\w\d]+?'\])\['value'\] >>> $form_data$1
 			}
-		}
+			if ( $data[ $f->id ] ) {
+				// handle separate saved values
+				if ( $f->field_options['separate_value'] && $data[ $f->id ] ) {
+					if ( is_array( $data[ $f->id ] ) ) {// array stuff because it can be checkboxes or some other multi-select field
+						$data['label'][ $f->id ] = [];
+						foreach ( $f->options as $o ) {
+							if ( in_array( $o['value'], $data[ $f->id ], true ) ) {
+								$data['label'][ $f->id ][] = $o['label'];
+							}
+						}
+					} else {
+						foreach ( $f->options as $o ) {
+							if ( $o['value'] == $data[ $f->id ] ) {
+								$data['label'][ $f->id ] = $o['label'];
+								break;
+							}
+						}
+					}
+				}
+				// multi-select convert arrays to strings
+				if ( is_array( $data[ $f->id ] ) ) {
+					$data[ $f->id ] = implode( '; ', $data[ $f->id ] );
+					if ( isset( $data['label'][ $f->id ] ) ) {
+						if ( is_array( $data['label'][ $f->id ] ) ) {
+							$data['label'][ $f->id ] = implode( '; ', $data['label'][ $f->id ] );
+			// TESTING
+						} else {
+							error_log($f, "pdf plugin: value was array but not label");
+						}
+					}
+					if ( $f->type != "checkbox" ) {
+						error_log($f, "pdf plugin: value is an array but not a checkbox field");
+					}
+				} elseif ( $f->type === "checkbox" ) {
+					error_log($f, "pdf plugin: checkbox is not an array");
+			// END TESTING
+				}
+			}
 
-		// functionality from view_data() which seemed fun
+			// make keys available too... for now?
+			$data[ $f->field_key ] = $data[ $f->id ];
+			if ( isset( $data['label'][ $f->id ] ) ) $data['label'][ $f->field_key ] = $data['label'][ $f->id ];
+			// for backwards compat... or regex your templates: \$form_data\['field'\](\['[\w\d]+?'\])\['value'\] >>> $form_data$1
+			// $data['field'][ $f->field_key ] = ['value' => $data[ $f->id ] ];
+			// $data['field'][ $f->field_key ]['string'] = isset($data['label'][ $f->id ]) ? $data['label'][ $f->id ] : $data[ $f->id ];
+		}
+		// make a ['value'] array for separate value fields as well, to correspond to the ['label'] array, and allow more explicit references
+		// $data['value'] = [];// define this above, just under the ['label'] = []
+		// foreach ( $data['label'] as $k => $l ) {
+		// 	$data['value'][ $k ] .= $data[ $k ];
+		// }
+
+		// debug functionality from view_data() which seemed fun
 		if ( !empty( $_GET['data'] ) ) { echo '<pre>'; print_r($data); echo '</pre>'; }
 
 		return $data;
