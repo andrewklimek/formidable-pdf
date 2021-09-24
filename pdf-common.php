@@ -46,26 +46,28 @@ class FPPDF_Common
 			if ( strpos( $f->field_options['classes'], 'pdf_hidden') === false ) {
 				$data[ $f->id ] = isset( $entry->metas[ $f->id ] ) ? $entry->metas[ $f->id ] : '';
 			}
-			if ( $data[ $f->id ] ) {
-				// handle separate saved values
-				if ( $f->field_options['separate_value'] && $data[ $f->id ] ) {
-					if ( is_array( $data[ $f->id ] ) ) {// array stuff because it can be checkboxes or some other multi-select field
-						$data['label'][ $f->id ] = [];
-						foreach ( $f->options as $o ) {
-							if ( in_array( $o['value'], $data[ $f->id ], true ) ) {
-								$data['label'][ $f->id ][] = $o['label'];
-							}
+			// handle separate saved values
+			if ( $f->field_options['separate_value'] ) {
+				if ( ! $data[ $f->id ] ) {// still need to add blanks to the 'label' array so that they don't throw undefined index warnings when used in templates 
+					$data['label'][ $f->id ] = '';
+				} elseif ( is_array( $data[ $f->id ] ) ) {// array stuff because it can be checkboxes or some other multi-select field
+					$data['label'][ $f->id ] = [];
+					foreach ( $f->options as $o ) {
+						if ( in_array( $o['value'], $data[ $f->id ], true ) ) {
+							$data['label'][ $f->id ][] = $o['label'];
 						}
-					} else {
-						foreach ( $f->options as $o ) {
-							if ( $o['value'] == $data[ $f->id ] ) {
-								$data['label'][ $f->id ] = $o['label'];
-								break;
-							}
+					}
+				} else {
+					foreach ( $f->options as $o ) {
+						if ( $o['value'] == $data[ $f->id ] ) {
+							$data['label'][ $f->id ] = $o['label'];
+							break;
 						}
 					}
 				}
-				// multi-select convert arrays to strings
+			}
+			// multi-select convert arrays to strings
+			if ( $data[ $f->id ] ) {
 				if ( is_array( $data[ $f->id ] ) ) {
 					$data[ $f->id ] = implode( '; ', $data[ $f->id ] );
 					if ( isset( $data['label'][ $f->id ] ) ) {
