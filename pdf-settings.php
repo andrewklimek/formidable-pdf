@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Plugin: Formidable Pro PDF Extended
- * File: settings.php
- * 
- * Handles the Formidable Pro Settings page in Wordpress
- */
 
 class FPPDF_Settings {
 	/* 
@@ -83,7 +77,7 @@ class FPPDF_Settings {
 	}
 	
 	/*
-	 * Shows the GF PDF Extended settings page
+	 * Shows the settings page
 	 */		
 	public static function fppdf_settings_page() {
 	    /*

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Plugin: Formidable Pro PDF Extended
- * File: install-update-manager.php
- * 
- * This file handles the installation and update code that ensures the plugin will be supported.
- */
 
 /**
  * Check to see if Formidable Pro version is supported

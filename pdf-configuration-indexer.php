@@ -1,10 +1,4 @@
 <?php
-
-/**
- * Class: FPPDFGenerator
- * Plugin: Formidable Pro PDF Extended
- * Usage: assign options from user configuration file, automatically attach PDFs to specified Formidable Pro, and view PDF from admin area.
- */
  
  class FPPDFGenerator
  {

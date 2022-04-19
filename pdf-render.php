@@ -126,7 +126,7 @@ class FPPDFRender
 	/**
 	 * Creates the PDF and does a specific output (see PDF_Generator function above for $output variable types)
 	 */
-	public function PDF_processing($html, $filename, $id, $output = 'view', $arguments)
+	public function PDF_processing($html, $filename, $id, $output = 'view', $arguments = [] )
 	{
 
 		 if( ! class_exists( '\Mpdf\Mpdf' ) ) {

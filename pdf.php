@@ -30,7 +30,7 @@ GNU General Public License for more details.
 if(!defined('FP_PDF_PLUGIN_DIR')) define('FP_PDF_PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 if(!defined('FP_PDF_PLUGIN_URL')) define('FP_PDF_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 if(!defined('FP_PDF_SETTINGS_URL')) define("FP_PDF_SETTINGS_URL", site_url() .'/wp-admin/admin.php?page=formidable-settings#PDF_settings');
-if(!defined('FP_PDF_EXTENDED_PLUGIN_BASENAME')) define('FP_PDF_EXTENDED_PLUGIN_BASENAME', plugin_basename(__FILE__));
+// if(!defined('FP_PDF_PLUGIN_BASENAME')) define('FP_PDF_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 // old location
 // if(!defined('FP_PDF_SAVE_FOLDER')) define('FP_PDF_SAVE_FOLDER', 'FORMIDABLE_PDF_TEMPLATES');
@@ -85,21 +85,15 @@ class FPPDF_Core extends FPPDFGenerator
 	 */
 	public static function pdf_init()
 	{
-		 /*
-		  * Check if Formidable Pro is installed before we continue
-		  * Include common functions for test
-		  */
-		//   if ( FPPDF_Common::is_formidable_supported( FP_PDF_EXTENDED_SUPPORTED_VERSION ) === false ) {
-		// 	 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_compatibility_error' );
-		// 	 return;
-		//   } else if ( FPPDF_Common::is_wordpress_supported( FP_PDF_EXTENDED_WP_SUPPORTED_VERSION ) === false ) {
-		// 	 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Common::display_wp_compatibility_error' );
-		// 	 return;
-		//   }
-      //else {
-			// add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Core::add_documentation_byline' );
-		  //}
-
+		/*
+		 * Check if Formidable Pro is installed before we continue
+		 */
+		// if ( ! function_exists( 'load_formidable_pro' ) ) {
+		// 	add_action( 'admin_notices', function(){ if ( $GLOBALS['parent_file'] === 'plugins.php' )
+		// 		echo "<div class=error><p>Formidable Pro PDF Extended requires Formidable Forms Pro to be installed.</div>";
+		// 	} );
+		// 	return;
+		// }
 
 	   /*
 	    * As it's called inside a undefined function we need to globalise the $fppdf namespace
