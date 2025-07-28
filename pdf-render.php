@@ -129,21 +129,18 @@ class FPPDFRender
 	public function PDF_processing($html, $filename, $id, $output = 'view', $arguments = [] )
 	{
 
-		 if( ! class_exists( '\Mpdf\Mpdf' ) ) {
+		if ( ! class_exists( '\Mpdf\Mpdf' ) ) {
 			require_once FP_PDF_PLUGIN_DIR . '/vendor/autoload.php';
-		 }
+		}
 
-		 $paper_size = $arguments['pdf_size'];
+		$paper_size = $arguments['pdf_size'];
 
-		 if(!is_array($paper_size))
-		 {
-			 $orientation = ($arguments['orientation'] == 'landscape') ? '-L' : '';
-			 $paper_size = $paper_size.$orientation;
-		 }
-		 else
-		 {
-		 	$orientation = ($arguments['orientation'] == 'landscape') ? 'L' : 'P';
-		 }
+		if ( ! is_array( $paper_size ) ) {
+			$orientation = ($arguments['orientation'] == 'landscape') ? '-L' : '';
+			$paper_size = $paper_size.$orientation;
+		} else {
+			$orientation = ($arguments['orientation'] == 'landscape') ? 'L' : 'P';
+		}
 
 		$config = [
 			'format' => $paper_size,
@@ -163,7 +160,41 @@ class FPPDFRender
 			'showWatermarkText' => true,
 			'showWatermarkImage' => true,
 			// 'autoPadding' => true,// causing Undefined index: border_radius_TL_H and others in Tag.php
-			];
+		];
+
+		// Custom Fonts
+		$customFontData = [];
+
+		// Check if FP_PDF_FONT_LOCATION is defined and exists
+		if (defined('FP_PDF_FONT_LOCATION') && is_dir(FP_PDF_FONT_LOCATION)) {
+			// Get all .ttf files in the directory
+			$fontFiles = glob(FP_PDF_FONT_LOCATION . '/*.ttf');
+			
+			foreach ($fontFiles as $fontFile) {
+				// Extract the font name from the file (without extension)
+				$fontName = strtolower(pathinfo($fontFile, PATHINFO_FILENAME));
+				
+				// Assume regular style ('R') for simplicity; adjust if you need to detect styles
+				$customFontData[$fontName] = [
+					'R' => basename($fontFile),
+				];
+			}
+		}
+
+		if ( $customFontData ) {
+			$defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+			$fontDirs = $defaultConfig['fontDir'];
+			$defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+			$fontData = $defaultFontConfig['fontdata'];
+			// Merge custom font directory with default font directories
+			$config['fontDir'] = array_merge( $fontDirs, [FP_PDF_FONT_LOCATION] );
+			// Merge custom font data with default font data
+			$config['fontdata'] = $fontData + $customFontData;
+			if ( count( $customFontData ) === 1 ) {
+				$config['default_font'] = array_key_first($customFontData);
+			}
+		}
+
 		$mpdf = new \Mpdf\Mpdf($config);
 
 		/*
